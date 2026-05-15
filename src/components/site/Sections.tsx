@@ -40,20 +40,24 @@ const actives = [
 
 const reviews = [
   {
+    name: "Patrícia R.",
+    city: "Curitiba, PR",
+    when: "1 semana atrás",
+    text:
+      "Sofria com manchas na testa há anos. Em 30 dias clarearam visivelmente, como mostra a foto. Recomendo de olhos fechados!",
+    initials: "PR",
+    image: reviewForehead,
+    imageAlt: "Antes e depois — manchas na testa",
+  },
+  {
     name: "Carla M.",
     city: "São Paulo, SP",
     when: "3 dias atrás",
     text:
       "Comecei a usar há 3 semanas e a diferença nas axilas é absurda. Já posso usar regata sem vergonha. Vale cada centavo!",
     initials: "CM",
-  },
-  {
-    name: "Patrícia R.",
-    city: "Curitiba, PR",
-    when: "1 semana atrás",
-    text:
-      "Sofria com melasma no rosto há anos. Em 30 dias as manchas começaram a clarear visivelmente. Recomendo de olhos fechados!",
-    initials: "PR",
+    image: reviewArmpit,
+    imageAlt: "Antes e depois — clareamento das axilas",
   },
   {
     name: "Roberto S.",
