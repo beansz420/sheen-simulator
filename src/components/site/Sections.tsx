@@ -5,6 +5,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import reviewForehead from "@/assets/review-forehead.jpg";
+import reviewArmpit from "@/assets/review-armpit.jpg";
 
 const problems = [
   "Manchas escuras difíceis de uniformizar",
@@ -38,20 +40,24 @@ const actives = [
 
 const reviews = [
   {
+    name: "Patrícia R.",
+    city: "Curitiba, PR",
+    when: "1 semana atrás",
+    text:
+      "Sofria com manchas na testa há anos. Em 30 dias clarearam visivelmente, como mostra a foto. Recomendo de olhos fechados!",
+    initials: "PR",
+    image: reviewForehead,
+    imageAlt: "Antes e depois — manchas na testa",
+  },
+  {
     name: "Carla M.",
     city: "São Paulo, SP",
     when: "3 dias atrás",
     text:
       "Comecei a usar há 3 semanas e a diferença nas axilas é absurda. Já posso usar regata sem vergonha. Vale cada centavo!",
     initials: "CM",
-  },
-  {
-    name: "Patrícia R.",
-    city: "Curitiba, PR",
-    when: "1 semana atrás",
-    text:
-      "Sofria com melasma no rosto há anos. Em 30 dias as manchas começaram a clarear visivelmente. Recomendo de olhos fechados!",
-    initials: "PR",
+    image: reviewArmpit,
+    imageAlt: "Antes e depois — clareamento das axilas",
   },
   {
     name: "Roberto S.",
@@ -189,10 +195,16 @@ export function Sections() {
                 </div>
               </div>
               <p className="mt-4 text-sm leading-relaxed text-foreground">"{r.text}"</p>
-              {/* Placeholder for review media — to be replaced */}
-              <div className="mt-4 flex aspect-[4/3] items-center justify-center rounded-xl border-2 border-dashed border-border bg-muted text-xs text-muted-foreground">
-                Foto do depoimento (em breve)
-              </div>
+              {r.image && (
+                <div className="mt-4 overflow-hidden rounded-xl border bg-muted">
+                  <img
+                    src={r.image}
+                    alt={r.imageAlt}
+                    className="aspect-[4/3] w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              )}
             </div>
           ))}
         </div>
