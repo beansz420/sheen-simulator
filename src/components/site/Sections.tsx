@@ -7,6 +7,8 @@ import {
 } from "@/components/ui/accordion";
 import reviewForehead from "@/assets/review-forehead.jpg";
 import reviewArmpit from "@/assets/review-armpit.jpg";
+import reviewKit from "@/assets/review-kit.jpg";
+import reviewTube from "@/assets/review-tube.jpg";
 
 const problems = [
   "Manchas escuras difíceis de uniformizar",
