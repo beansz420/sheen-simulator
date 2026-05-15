@@ -5,6 +5,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import reviewForehead from "@/assets/review-forehead.jpg";
+import reviewArmpit from "@/assets/review-armpit.jpg";
 
 const problems = [
   "Manchas escuras difíceis de uniformizar",
