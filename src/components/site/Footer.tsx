@@ -3,7 +3,7 @@ export function Footer() {
     <footer className="border-t bg-secondary py-12">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 md:grid-cols-4">
         <div>
-          <p className="mb-3 text-2xl font-black text-primary">DERMACLARÊ</p>
+          <p className="mb-3 text-2xl font-black text-primary">CICATRIDERME</p>
           <p className="text-sm text-muted-foreground">Dermocosméticos com tecnologia avançada para uma pele uniforme e saudável.</p>
         </div>
         <div>
@@ -28,7 +28,7 @@ export function Footer() {
         </div>
       </div>
       <p className="mt-10 px-4 text-center text-xs text-muted-foreground">
-        © 2026 Dermaclarê. Todos os direitos reservados.
+        © 2026 Cicatriderme. Todos os direitos reservados.
       </p>
     </footer>
   );

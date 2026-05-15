@@ -10,8 +10,8 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Creme Clareador de Manchas — Dermaclarê" },
-      { name: "description", content: "Creme clareador para melasma, axilas, virilha e rosto. Fórmula com Lumin White™, Niacinamida e Ácido Glicólico." },
+      { title: "Clareador Dérmico Cicatriderme — Manchas, Axilas e Virilha" },
+      { name: "description", content: "Creme clareador Cicatriderme para melasma, axilas, virilha e rosto. Fórmula com Lumin White™, Niacinamida e Ácido Glicólico. Frete grátis." },
     ],
   }),
 });
