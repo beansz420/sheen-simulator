@@ -1,185 +1,249 @@
-import { Check, Sparkles, Droplet, Clock, ShieldCheck, Leaf } from "lucide-react";
-import model from "@/assets/product-model.jpg";
-import blue from "@/assets/product-blue.jpg";
+import { X, Check, ShieldCheck, Truck, Award, Star, BadgeCheck } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const problems = [
   "Manchas escuras difíceis de uniformizar",
-  "Escurecimento em axilas e virilhas",
-  "Pele com aspecto opaco e sem viço",
-  "Tom de pele desigual em algumas regiões",
-  "Marcas pós-acne ou pós-inflamatórias",
-  "Desconforto com a aparência da pele",
+  "Escurecimento em axilas, virilha e áreas íntimas",
+  "Marcas pós-acne que não saem",
+  "Tom de pele desigual no rosto e corpo",
+  "Pele opaca, sem viço e envelhecida",
+  "Desconforto e baixa autoestima com a aparência",
 ];
 
-const benefits = [
-  { n: "1", t: "Auxilia na redução de manchas", d: "Contribui para suavizar áreas escurecidas, deixando a pele mais uniforme ao longo do uso." },
-  { n: "2", t: "Uniformiza o tom da pele", d: "Ajuda a equilibrar a tonalidade em regiões com escurecimento ou diferenças de cor." },
-  { n: "3", t: "Promove renovação celular", d: "Auxilia na regeneração das células, melhorando textura e aparência geral." },
-  { n: "4", t: "Devolve luminosidade à pele", d: "Contribui para recuperar o viço natural e a saúde aparente da pele." },
+const actives = [
+  {
+    n: "01",
+    title: "Lumin White™",
+    dose: "Tecnologia clareadora",
+    desc: "Inibe a melanina e clareia de forma progressiva, mesmo em manchas antigas.",
+  },
+  {
+    n: "02",
+    title: "Niacinamida",
+    dose: "5% de concentração",
+    desc: "Uniformiza o tom, fortalece a barreira cutânea e reduz manchas pós-inflamatórias.",
+  },
+  {
+    n: "03",
+    title: "Ácido Glicólico",
+    dose: "Ação renovadora",
+    desc: "Renova as camadas da pele e potencializa a absorção dos demais ativos.",
+  },
 ];
 
-const ingredients = [
-  { name: "Lumin White™", desc: "Inibe a melanina e clareia de forma progressiva." },
-  { name: "Ácido Glicólico", desc: "Renova a pele e acelera a absorção dos ativos." },
-  { name: "Revinage™", desc: "Clareia, renova e reduz a oleosidade." },
-  { name: "Ácido Fítico", desc: "Ilumina e bloqueia a formação de manchas." },
-  { name: "Niacinamida", desc: "Uniformiza o tom e fortalece a barreira cutânea." },
-  { name: "Nanotecnologia", desc: "Potencializa a penetração e a eficácia dos ativos." },
+const reviews = [
+  {
+    name: "Carla M.",
+    city: "São Paulo, SP",
+    when: "3 dias atrás",
+    text:
+      "Comecei a usar há 3 semanas e a diferença nas axilas é absurda. Já posso usar regata sem vergonha. Vale cada centavo!",
+    initials: "CM",
+  },
+  {
+    name: "Patrícia R.",
+    city: "Curitiba, PR",
+    when: "1 semana atrás",
+    text:
+      "Sofria com melasma no rosto há anos. Em 30 dias as manchas começaram a clarear visivelmente. Recomendo de olhos fechados!",
+    initials: "PR",
+  },
+  {
+    name: "Roberto S.",
+    city: "Belo Horizonte, MG",
+    when: "2 semanas atrás",
+    text:
+      "Comprei pra esposa e acabei usando também nos cotovelos e joelhos escurecidos. Resultado sensacional, pele uniforme.",
+    initials: "RS",
+  },
+  {
+    name: "Juliana F.",
+    city: "Florianópolis, SC",
+    when: "5 dias atrás",
+    text:
+      "Era cética, mas em 2 semanas já vi diferença na virilha. Comprei o kit de 2 e gostei tanto que vou pegar o kit de 3.",
+    initials: "JF",
+  },
 ];
 
-const phases = [
-  { phase: "Fase 1", time: "Os primeiros 30 dias", points: ["Pele mais hidratada e início de uniformização", "Ação nas camadas mais profundas"] },
-  { phase: "Fase 2", time: "De 30 a 60 dias", points: ["Manchas escuras começam a clarear", "Pele mais uniforme e equilibrada", "Textura mais lisa e refinada"] },
-  { phase: "Fase 3", time: "90 dias e além", points: ["Manchas visivelmente reduzidas", "Tom de pele uniforme e iluminado", "Pele com aspecto saudável e renovado"] },
+const guarantees = [
+  { i: ShieldCheck, t: "Compra 100% Segura", d: "Seus dados protegidos com criptografia de ponta" },
+  { i: Truck, t: "Frete Grátis via Sedex", d: "Entrega em 2 a 5 dias úteis para todo Brasil" },
+  { i: BadgeCheck, t: "Garantia de 30 dias", d: "Satisfação garantida ou seu dinheiro de volta" },
+  { i: Award, t: "Dermatologicamente testado", d: "Fórmula segura, hipoalergênica e eficaz" },
 ];
 
-const stats = [
-  { n: "94%", t: "perceberam redução visível das manchas escuras" },
-  { n: "97%", t: "notaram a pele mais uniforme e iluminada" },
-  { n: "92%", t: "relataram pele mais hidratada e refinada" },
+const faqs = [
+  {
+    q: "Em quanto tempo vou ver os resultados?",
+    a: "Os primeiros sinais de uniformização aparecem em até 30 dias de uso contínuo. Manchas mais escuras costumam clarear visivelmente entre 60 e 90 dias.",
+  },
+  {
+    q: "Posso usar no rosto e no corpo?",
+    a: "Sim. A fórmula foi desenvolvida para uso facial, axilas, virilha, áreas íntimas, cotovelos e joelhos.",
+  },
+  {
+    q: "Tem garantia?",
+    a: "Sim. Oferecemos 30 dias de garantia incondicional. Se não gostar, devolvemos 100% do seu dinheiro.",
+  },
+  {
+    q: "O frete é realmente grátis?",
+    a: "Sim, o frete é grátis para todo o Brasil em qualquer um dos kits desta promoção.",
+  },
+  {
+    q: "Posso usar grávida ou amamentando?",
+    a: "Recomendamos consultar o seu médico antes de iniciar o uso de qualquer dermocosmético durante a gestação ou amamentação.",
+  },
 ];
 
 export function Sections() {
   return (
-    <div className="space-y-24 py-20">
+    <div className="space-y-20 py-16">
       {/* Problems */}
-      <section className="mx-auto max-w-6xl px-4">
-        <p className="mb-3 text-center text-sm font-bold uppercase tracking-wider text-primary">Isso acontece com você?</p>
-        <h2 className="mb-12 text-center text-3xl font-bold md:text-4xl">Por que uniformizar a sua pele?</h2>
-        <p className="mx-auto mb-12 max-w-2xl text-center text-muted-foreground">
-          Com o tempo e fatores como sol, atrito, depilação e alterações hormonais, a pele pode desenvolver manchas e irregularidades no tom.
-        </p>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <section className="mx-auto max-w-5xl px-4">
+        <h2 className="mb-10 text-center text-2xl font-extrabold leading-tight md:text-4xl">
+          Você sabia que <span className="text-primary">8 em cada 10 mulheres</span><br className="hidden md:block" />
+          convivem com manchas na pele?
+        </h2>
+        <div className="mx-auto max-w-2xl space-y-3">
           {problems.map((p) => (
-            <div key={p} className="flex items-start gap-3 rounded-2xl border bg-card p-5">
-              <div className="rounded-full bg-primary/10 p-1.5">
-                <Check className="h-4 w-4 text-primary" />
+            <div key={p} className="flex items-start gap-3 rounded-xl border bg-card p-4">
+              <div className="mt-0.5 rounded-full bg-destructive/10 p-1">
+                <X className="h-4 w-4 text-destructive" />
               </div>
               <p className="font-medium">{p}</p>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Benefits with image */}
-      <section className="mx-auto max-w-6xl px-4">
-        <h2 className="mb-12 text-center text-3xl font-bold md:text-4xl">O que o Clareador vai fazer por você</h2>
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-          <img src={model} alt="Resultado de pele uniforme" className="rounded-3xl object-cover" width={1024} height={1024} loading="lazy" />
-          <div className="space-y-6">
-            {benefits.map((b) => (
-              <div key={b.n} className="flex gap-4">
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary-glow text-lg font-bold text-primary-foreground">
-                  {b.n}
-                </div>
-                <div>
-                  <h3 className="mb-1 text-lg font-bold">{b.t}</h3>
-                  <p className="text-sm text-muted-foreground">{b.d}</p>
-                </div>
-              </div>
-            ))}
+          <div className="mt-4 rounded-xl border-2 border-success bg-success/5 p-4">
+            <p className="flex items-start gap-3 font-bold">
+              <span className="rounded-full bg-success p-1">
+                <Check className="h-4 w-4 text-success-foreground" />
+              </span>
+              Cicatriderme resolve TODOS esses problemas em uma única fórmula.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="bg-primary py-16 text-primary-foreground">
+      {/* Actives — Tripla Ação */}
+      <section className="bg-secondary py-16">
         <div className="mx-auto max-w-6xl px-4">
-          <h2 className="mb-12 text-center text-3xl font-bold md:text-4xl">Eficácia comprovada</h2>
-          <div className="grid gap-8 md:grid-cols-3">
-            {stats.map((s) => (
-              <div key={s.n} className="text-center">
-                <p className="mb-2 text-6xl font-black">{s.n}</p>
-                <p className="opacity-90">{s.t}</p>
+          <h2 className="mb-2 text-center text-3xl font-extrabold md:text-4xl">Tripla Ação Clareadora</h2>
+          <p className="mb-12 text-center text-muted-foreground">
+            3 ativos de alta performance em uma única fórmula
+          </p>
+          <div className="grid gap-6 md:grid-cols-3">
+            {actives.map((a) => (
+              <div key={a.n} className="relative rounded-2xl border bg-card p-6 shadow-sm">
+                <span className="absolute -top-4 left-6 rounded-full bg-gradient-to-br from-primary to-primary-glow px-3 py-1 text-sm font-extrabold text-primary-foreground shadow">
+                  {a.n}
+                </span>
+                <h3 className="mt-2 text-xl font-extrabold">{a.title}</h3>
+                <p className="mt-1 text-sm font-semibold text-primary">{a.dose}</p>
+                <p className="mt-3 text-sm text-muted-foreground">{a.desc}</p>
               </div>
             ))}
           </div>
-          <p className="mt-8 text-center text-xs opacity-70">*Resultados baseados em percepção de usuárias após uso contínuo do produto.</p>
         </div>
       </section>
 
-      {/* Timeline */}
+      {/* Reviews */}
       <section className="mx-auto max-w-6xl px-4">
-        <h2 className="mb-12 text-center text-3xl font-bold md:text-4xl">Linha do tempo dos resultados</h2>
-        <div className="grid gap-6 md:grid-cols-3">
-          {phases.map((p, i) => (
-            <div key={i} className="relative rounded-3xl border bg-card p-6">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <Clock className="h-6 w-6 text-primary" />
+        <div className="mb-10 text-center">
+          <h2 className="text-3xl font-extrabold md:text-4xl">O que dizem nossas clientes</h2>
+          <div className="mt-3 flex items-center justify-center gap-2">
+            <div className="flex">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="h-5 w-5 fill-promo text-promo" />
+              ))}
+            </div>
+            <span className="font-bold">4.9/5</span>
+            <span className="text-muted-foreground">· 3.812+ clientes satisfeitas</span>
+          </div>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-2">
+          {reviews.map((r) => (
+            <div key={r.name} className="rounded-2xl border bg-card p-5 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-glow text-sm font-bold text-primary-foreground">
+                  {r.initials}
+                </div>
+                <div className="flex-1">
+                  <p className="flex items-center gap-1.5 text-sm font-bold">
+                    {r.name}
+                    <BadgeCheck className="h-4 w-4 text-primary" />
+                    <span className="text-xs font-normal text-muted-foreground">Verificada</span>
+                  </p>
+                  <p className="text-xs text-muted-foreground">{r.city} · {r.when}</p>
+                </div>
+                <div className="flex">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-3.5 w-3.5 fill-promo text-promo" />
+                  ))}
+                </div>
               </div>
-              <p className="text-xs font-bold uppercase tracking-wider text-primary">{p.phase}</p>
-              <h3 className="mb-4 text-xl font-bold">{p.time}</h3>
-              <ul className="space-y-2">
-                {p.points.map((pt) => (
-                  <li key={pt} className="flex gap-2 text-sm text-muted-foreground">
-                    <Check className="h-4 w-4 flex-shrink-0 text-success" />
-                    {pt}
-                  </li>
-                ))}
-              </ul>
+              <p className="mt-4 text-sm leading-relaxed text-foreground">"{r.text}"</p>
+              {/* Placeholder for review media — to be replaced */}
+              <div className="mt-4 flex aspect-[4/3] items-center justify-center rounded-xl border-2 border-dashed border-border bg-muted text-xs text-muted-foreground">
+                Foto do depoimento (em breve)
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Ingredients */}
-      <section className="bg-secondary py-20">
-        <div className="mx-auto max-w-6xl px-4">
-          <h2 className="mb-3 text-center text-3xl font-bold md:text-4xl">Por que vale cada centavo?</h2>
-          <p className="mx-auto mb-12 max-w-2xl text-center text-muted-foreground">
-            Uma combinação de ativos de alta performance trabalhando em sinergia pela sua pele.
+      {/* Urgency */}
+      <section className="mx-auto max-w-3xl px-4">
+        <div className="rounded-2xl border-2 border-promo bg-promo/10 p-6 text-center md:p-10">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-promo">⚠ Atenção</p>
+          <h2 className="text-2xl font-extrabold md:text-3xl">Estoque quase esgotado!</h2>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Restam apenas <span className="font-bold text-foreground">14 unidades</span> com preço promocional.<br />
+            Depois, o produto volta ao preço original.
           </p>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {ingredients.map((ing) => (
-              <div key={ing.name} className="rounded-3xl bg-card p-6 shadow-sm">
-                <div className="mb-4 inline-flex rounded-2xl bg-gradient-to-br from-primary to-primary-glow p-3">
-                  <Sparkles className="h-6 w-6 text-primary-foreground" />
-                </div>
-                <h3 className="mb-2 text-lg font-bold">{ing.name}</h3>
-                <p className="text-sm text-muted-foreground">{ing.desc}</p>
-              </div>
-            ))}
-          </div>
+          <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Oferta por tempo limitado
+          </p>
         </div>
       </section>
 
-      {/* How to use */}
+      {/* Guarantees */}
       <section className="mx-auto max-w-6xl px-4">
-        <h2 className="mb-12 text-center text-3xl font-bold md:text-4xl">Como usar</h2>
-        <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-          <img src={blue} alt="Aplicação do creme" className="rounded-3xl object-cover" width={1024} height={1024} loading="lazy" />
-          <div className="space-y-5">
-            {[
-              { i: Droplet, t: "Aplique na pele limpa", d: "Com a pele seca, espalhe o produto na região desejada." },
-              { i: Sparkles, t: "Massageie até a absorção", d: "Movimentos circulares até o produto ser totalmente absorvido." },
-              { i: ShieldCheck, t: "Use somente à noite", d: "Pela manhã, lave a área tratada. Filtro solar é obrigatório durante o dia." },
-              { i: Leaf, t: "Constância é tudo", d: "Use diariamente após a segunda semana para potencializar os resultados." },
-            ].map(({ i: Icon, t, d }) => (
-              <div key={t} className="flex gap-4 rounded-2xl border bg-card p-5">
-                <div className="rounded-xl bg-primary/10 p-3">
-                  <Icon className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="mb-1 font-bold">{t}</h3>
-                  <p className="text-sm text-muted-foreground">{d}</p>
-                </div>
+        <h2 className="mb-12 text-center text-3xl font-extrabold md:text-4xl">Garantias Cicatriderme</h2>
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          {guarantees.map(({ i: Icon, t, d }) => (
+            <div key={t} className="rounded-2xl border bg-card p-6 text-center shadow-sm">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary-glow">
+                <Icon className="h-7 w-7 text-primary-foreground" />
               </div>
-            ))}
-          </div>
+              <h3 className="font-bold">{t}</h3>
+              <p className="mt-1 text-sm text-muted-foreground">{d}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* CTA Final */}
-      <section className="mx-auto max-w-5xl px-4">
-        <div className="rounded-3xl bg-gradient-to-br from-primary to-primary-glow p-10 text-center text-primary-foreground md:p-16">
-          <h2 className="mb-4 text-3xl font-bold md:text-5xl">Sua pele uniforme começa hoje</h2>
-          <p className="mx-auto mb-8 max-w-xl opacity-90">
-            Mais de 300 mil pessoas já transformaram sua rotina de skincare. Garanta o seu agora e ganhe 3% off no PIX.
-          </p>
-          <button className="rounded-full bg-background px-10 py-5 text-base font-bold uppercase tracking-wide text-primary shadow-xl transition-transform hover:scale-105">
-            Comprar agora
-          </button>
-        </div>
+      {/* FAQ */}
+      <section className="mx-auto max-w-3xl px-4">
+        <h2 className="mb-10 text-center text-3xl font-extrabold md:text-4xl">Perguntas Frequentes</h2>
+        <Accordion type="single" collapsible className="space-y-3">
+          {faqs.map((f, i) => (
+            <AccordionItem
+              key={i}
+              value={`item-${i}`}
+              className="rounded-xl border bg-card px-5"
+            >
+              <AccordionTrigger className="text-left font-bold">{f.q}</AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground">{f.a}</AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </section>
     </div>
   );

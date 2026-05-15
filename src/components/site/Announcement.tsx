@@ -1,20 +1,42 @@
+import { useEffect, useState } from "react";
+import { Truck, Clock } from "lucide-react";
+
+function pad(n: number) {
+  return n.toString().padStart(2, "0");
+}
+
 export function Announcement() {
-  const items = [
-    "PARCELE EM ATÉ 12 VEZES",
-    "GANHE 3% OFF NO PIX",
-    "FRETE GRÁTIS ACIMA DE R$ 199",
-    "ENVIO EM 24H",
-  ];
+  const [time, setTime] = useState({ h: 1, m: 59, s: 59 });
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setTime((t) => {
+        let { h, m, s } = t;
+        s -= 1;
+        if (s < 0) { s = 59; m -= 1; }
+        if (m < 0) { m = 59; h -= 1; }
+        if (h < 0) { h = 1; m = 59; s = 59; }
+        return { h, m, s };
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, []);
+
   return (
-    <div className="overflow-hidden bg-primary text-primary-foreground">
-      <div className="flex animate-[scroll_30s_linear_infinite] gap-12 whitespace-nowrap py-2 text-xs font-semibold tracking-wider">
-        {[...items, ...items, ...items].map((t, i) => (
-          <span key={i} className="flex items-center gap-12">
-            {t} <span className="opacity-60">•</span>
-          </span>
-        ))}
+    <div className="bg-primary text-primary-foreground">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider sm:text-xs">
+        <span className="flex items-center gap-2">
+          <Truck className="h-4 w-4" /> Frete grátis · Oferta limitada
+        </span>
+        <span className="flex items-center gap-2">
+          <Clock className="h-4 w-4" /> Acaba em:
+          <span className="rounded bg-black/20 px-1.5 py-0.5 tabular-nums">{pad(time.h)}</span>
+          <span>:</span>
+          <span className="rounded bg-black/20 px-1.5 py-0.5 tabular-nums">{pad(time.m)}</span>
+          <span>:</span>
+          <span className="rounded bg-black/20 px-1.5 py-0.5 tabular-nums">{pad(time.s)}</span>
+        </span>
       </div>
-      <style>{`@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}`}</style>
     </div>
   );
 }
