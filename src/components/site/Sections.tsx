@@ -7,6 +7,8 @@ import {
 } from "@/components/ui/accordion";
 import reviewForehead from "@/assets/review-forehead.jpg";
 import reviewArmpit from "@/assets/review-armpit.jpg";
+import reviewKit from "@/assets/review-kit.jpg";
+import reviewTube from "@/assets/review-tube.jpg";
 
 const problems = [
   "Manchas escuras difíceis de uniformizar",
@@ -66,6 +68,8 @@ const reviews = [
     text:
       "Comprei pra esposa e acabei usando também nos cotovelos e joelhos escurecidos. Resultado sensacional, pele uniforme.",
     initials: "RS",
+    image: reviewTube,
+    imageAlt: "Cliente segurando o tubo do Clareador Dérmico",
   },
   {
     name: "Juliana F.",
@@ -74,6 +78,8 @@ const reviews = [
     text:
       "Era cética, mas em 2 semanas já vi diferença na virilha. Comprei o kit de 2 e gostei tanto que vou pegar o kit de 3.",
     initials: "JF",
+    image: reviewKit,
+    imageAlt: "Kit Clareador Dérmico + Sérum recebido pela cliente",
   },
 ];
 
