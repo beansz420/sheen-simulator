@@ -66,7 +66,7 @@ const reviews = [
     city: "Belo Horizonte, MG",
     when: "2 semanas atrás",
     text:
-      "Comprei pra esposa e acabei usando também nos cotovelos e joelhos escurecidos. Resultado sensacional, pele uniforme.",
+      "Comprei para a minha esposa e acabei usando também nos cotovelos e joelhos escurecidos. Resultado sensacional, pele uniforme.",
     initials: "RS",
     image: reviewTube,
     imageAlt: "Cliente segurando o tubo do Clareador Dérmico",
