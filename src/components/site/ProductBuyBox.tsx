@@ -41,13 +41,14 @@ const kits: Kit[] = [
   },
   {
     image: kit3,
-    title: "Kit 3 Clareador + Sérum Facial",
-    subtitle: "3 Clareadores + 1 Sérum Hidratante",
+    title: "Kit 3 Clareador Dérmico",
+    subtitle: "Niacinamida + Ácido Glicólico + Lumin White",
     price: "R$ 219,90",
-    oldPrice: "R$ 519,60",
-    off: "-58% OFF",
+    oldPrice: "R$ 479,70",
+    off: "-54% OFF",
+    perUnit: "(R$ 73,30/un)",
     badge: { label: "BRINDE EXCLUSIVO", tone: "teal" },
-    bonus: "Sérum Facial Grátis",
+    bonus: "+ Sérum Facial Hidratante de BRINDE",
   },
 ];
 
