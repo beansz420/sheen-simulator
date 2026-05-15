@@ -120,7 +120,10 @@ export function ProductBuyBox() {
         </span>
       </div>
 
-      <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(22,95%,55%)] py-5 text-base font-extrabold uppercase tracking-wide text-white shadow-xl transition-transform hover:scale-[1.01]">
+      <button
+        onClick={() => document.getElementById("kit-3")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(22,95%,55%)] py-5 text-base font-extrabold uppercase tracking-wide text-white shadow-xl transition-transform hover:scale-[1.01]"
+      >
         <ShoppingCart className="h-5 w-5" /> Quero o meu agora
       </button>
       <p className="text-center text-xs text-muted-foreground">Frete Grátis + Bônus Exclusivos</p>
@@ -150,7 +153,7 @@ export function ProductBuyBox() {
           <p className="mt-1 text-xs text-muted-foreground">Quanto mais unidades, <span className="font-bold text-foreground">maior a economia</span></p>
         </div>
         {kits.map((k, i) => (
-          <KitCard key={i} kit={k} />
+          <KitCard key={i} kit={k} id={`kit-${i + 1}`} />
         ))}
         <p className="text-center text-xs text-muted-foreground">🔒 Pagamento 100% seguro · Seus dados protegidos</p>
       </div>
@@ -158,9 +161,9 @@ export function ProductBuyBox() {
   );
 }
 
-function KitCard({ kit }: { kit: Kit }) {
+function KitCard({ kit, id }: { kit: Kit; id?: string }) {
   const card = (
-    <div className="rounded-2xl border border-border bg-background p-4 shadow-sm">
+    <div id={id} className="rounded-2xl border border-border bg-background p-4 shadow-sm scroll-mt-24">
       <div>
         <span
           className={`inline-block rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white ${
