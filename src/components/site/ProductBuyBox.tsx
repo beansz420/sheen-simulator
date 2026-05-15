@@ -22,19 +22,19 @@ const kits: Kit[] = [
     image: kit1,
     title: "1 Clareador Dérmico",
     subtitle: "Niacinamida + Ácido Glicólico + Lumin White",
-    price: "R$ 89,90",
-    oldPrice: "R$ 159,90",
-    off: "-43% OFF",
+    price: "R$ 49,90",
+    oldPrice: "R$ 89,90",
+    off: "-44% OFF",
     badge: { label: "MAIS VENDIDO", tone: "teal" },
   },
   {
     image: kit2,
     title: "Kit 2 Clareador Dérmico",
     subtitle: "Niacinamida + Ácido Glicólico + Lumin White",
-    price: "R$ 149,90",
-    oldPrice: "R$ 319,80",
-    off: "-53% OFF",
-    perUnit: "(R$ 74,95/un)",
+    price: "R$ 79,90",
+    oldPrice: "R$ 179,80",
+    off: "-56% OFF",
+    perUnit: "(R$ 39,95/un)",
     badge: { label: "MELHOR CUSTO-BENEFÍCIO", tone: "green" },
     ribbon: "RECOMENDADO — MAIOR ECONOMIA",
     highlighted: true,
@@ -43,10 +43,10 @@ const kits: Kit[] = [
     image: kit3,
     title: "Kit 3 Clareador Dérmico",
     subtitle: "Niacinamida + Ácido Glicólico + Lumin White",
-    price: "R$ 219,90",
-    oldPrice: "R$ 479,70",
-    off: "-54% OFF",
-    perUnit: "(R$ 73,30/un)",
+    price: "R$ 99,90",
+    oldPrice: "R$ 269,70",
+    off: "-63% OFF",
+    perUnit: "(R$ 33,30/un)",
     badge: { label: "BRINDE EXCLUSIVO", tone: "teal" },
     bonus: "+ Sérum Facial Hidratante de BRINDE",
   },
@@ -96,9 +96,9 @@ export function ProductBuyBox() {
       {/* Hero price */}
       <div className="rounded-2xl border bg-card p-4 shadow-sm">
         <div className="flex flex-wrap items-center gap-3">
-          <span className="text-3xl font-extrabold text-foreground">R$ 89,90</span>
-          <span className="text-sm font-medium text-muted-foreground line-through">R$ 159,90</span>
-          <span className="rounded-md bg-destructive px-2 py-0.5 text-xs font-bold text-destructive-foreground">-43%</span>
+          <span className="text-3xl font-extrabold text-foreground">R$ 49,90</span>
+          <span className="text-sm font-medium text-muted-foreground line-through">R$ 89,90</span>
+          <span className="rounded-md bg-destructive px-2 py-0.5 text-xs font-bold text-destructive-foreground">-44%</span>
           <span className="ml-auto rounded-full bg-success px-3 py-1 text-[11px] font-bold uppercase text-success-foreground">
             Economize 44%
           </span>
