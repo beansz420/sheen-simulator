@@ -8,7 +8,7 @@ export function Header() {
           <Menu className="h-6 w-6 text-primary" />
         </button>
         <a href="/" className="text-2xl font-black tracking-tight text-primary">
-          DERMACLARÊ
+          CICATRIDERME
         </a>
         <nav className="hidden flex-1 items-center justify-center gap-7 text-sm font-medium lg:flex">
           <a href="#" className="hover:text-primary">Skincare</a>
