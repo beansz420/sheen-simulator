@@ -195,10 +195,16 @@ export function Sections() {
                 </div>
               </div>
               <p className="mt-4 text-sm leading-relaxed text-foreground">"{r.text}"</p>
-              {/* Placeholder for review media — to be replaced */}
-              <div className="mt-4 flex aspect-[4/3] items-center justify-center rounded-xl border-2 border-dashed border-border bg-muted text-xs text-muted-foreground">
-                Foto do depoimento (em breve)
-              </div>
+              {r.image && (
+                <div className="mt-4 overflow-hidden rounded-xl border bg-muted">
+                  <img
+                    src={r.image}
+                    alt={r.imageAlt}
+                    className="aspect-[4/3] w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              )}
             </div>
           ))}
         </div>
