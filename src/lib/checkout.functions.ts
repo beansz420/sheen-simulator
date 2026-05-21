@@ -70,6 +70,8 @@ export const createPixOrder = createServerFn({ method: "POST" })
 
     // 2. Cria Pix na Pagap
     try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 20000);
       const res = await fetch("https://api.pagap.com.br/functions/v1/create-pix-payment", {
         method: "POST",
         headers: {
@@ -80,17 +82,22 @@ export const createPixOrder = createServerFn({ method: "POST" })
           amount,
           customer_name: data.customer_name,
           customer_email: data.customer_email,
-          customer_document: data.customer_document,
-          customer_phone: data.customer_phone,
+          customer_document: data.customer_document.replace(/\D/g, ""),
+          customer_phone: data.customer_phone.replace(/\D/g, ""),
           items: [{ name: kit.name, quantity: kit.quantity, price: kit.price }],
         }),
-      });
+        signal: controller.signal,
+      }).finally(() => clearTimeout(timeout));
 
-      const body = (await res.json()) as PagapResponse;
+      const body = (await res.json().catch(() => ({}))) as PagapResponse;
       if (!res.ok || !body.success || !body.transaction_id) {
         console.error("Pagap error:", res.status, body);
         await supabaseAdmin.from("orders").update({ status: "failed" }).eq("id", order.id);
-        return { ok: false as const, error: body.message || "Falha ao gerar Pix." };
+        const msg =
+          body.error ||
+          body.message ||
+          "Os gateways de pagamento estão instáveis. Tente novamente em instantes.";
+        return { ok: false as const, error: msg };
       }
 
       await supabaseAdmin
@@ -108,7 +115,7 @@ export const createPixOrder = createServerFn({ method: "POST" })
     } catch (err) {
       console.error("Pagap fetch error:", err);
       await supabaseAdmin.from("orders").update({ status: "failed" }).eq("id", order.id);
-      return { ok: false as const, error: "Erro de conexão com o pagamento." };
+      return { ok: false as const, error: "Erro de conexão com o pagamento. Tente novamente." };
     }
   });
 
