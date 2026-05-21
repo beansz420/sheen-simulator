@@ -14,7 +14,7 @@ const searchSchema = z.object({ kit: z.string().optional() });
 export const Route = createFileRoute("/checkout")({
   validateSearch: searchSchema,
   component: CheckoutPage,
-  head: () => ({ meta: [{ title: "Checkout — Cicatriderme" }] }),
+  head: () => ({ meta: [{ title: "Checkout — Cicatribem" }] }),
 });
 
 function CheckoutPage() {

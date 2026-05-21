@@ -95,7 +95,7 @@ export function ProductBuyBox() {
       </div>
 
       <h1 className="text-3xl font-extrabold leading-tight tracking-tight md:text-4xl">
-        Clareador Dérmico Cicatriderme
+        Clareador Dérmico Cicatribem
       </h1>
 
       {/* Hero price */}
@@ -115,7 +115,7 @@ export function ProductBuyBox() {
       </div>
 
       <p className="text-sm text-muted-foreground">
-        Cicatriderme · Niacinamida + Ácido Glicólico + Lumin White
+        Cicatribem · Niacinamida + Ácido Glicólico + Lumin White
       </p>
 
       <div className="flex items-center gap-2 rounded-xl bg-secondary px-4 py-3 text-sm">
