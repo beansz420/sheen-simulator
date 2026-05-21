@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getOrderStatus } from "@/lib/checkout.functions";
+import { sendMetaEvent } from "@/lib/meta-capi.functions";
+import { fbqTrack, generateEventId } from "@/lib/meta-pixel";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Copy, Loader2, Clock, XCircle } from "lucide-react";
 
@@ -14,7 +16,9 @@ export const Route = createFileRoute("/pedido/$transactionId")({
 function OrderPage() {
   const { transactionId } = Route.useParams();
   const fetchStatus = useServerFn(getOrderStatus);
+  const fireMetaEvent = useServerFn(sendMetaEvent);
   const [copied, setCopied] = useState(false);
+  const [purchaseFired, setPurchaseFired] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["order", transactionId],
@@ -27,6 +31,35 @@ function OrderPage() {
       return 4000;
     },
   });
+
+  // Dispara Purchase (Pixel + CAPI) quando pagamento confirmado
+  useEffect(() => {
+    if (purchaseFired) return;
+    if (!data?.ok) return;
+    if (data.order.status !== "paid") return;
+    const eventId = generateEventId();
+    fbqTrack(
+      "Purchase",
+      {
+        currency: "BRL",
+        value: Number(data.order.amount),
+        content_ids: [transactionId],
+        content_type: "product",
+      },
+      eventId,
+    );
+    void fireMetaEvent({
+      data: {
+        event_name: "Purchase",
+        event_id: eventId,
+        transaction_id: transactionId,
+        event_source_url: typeof window !== "undefined" ? window.location.href : undefined,
+        user_agent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
+      },
+    }).catch((e) => console.error("Meta CAPI failed", e));
+    setPurchaseFired(true);
+  }, [data, transactionId, purchaseFired, fireMetaEvent]);
+
 
   if (isLoading) {
     return (
