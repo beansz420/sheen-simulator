@@ -211,7 +211,7 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
   };
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4 px-4 pb-6 sm:px-6">
+    <form onSubmit={onSubmit} className="space-y-3 px-3 pb-6 pt-3 sm:space-y-4 sm:px-6 sm:pt-4">
       {/* Step 1 - Dados pessoais */}
       <section className="rounded-2xl bg-white p-5 shadow-sm">
         <StepBadge n={1} label="Dados pessoais" />
