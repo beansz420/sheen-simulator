@@ -72,14 +72,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Clareador" },
+      { name: "description", content: "Bright Skin Journey is an e-commerce application for purchasing skincare products." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Clareador" },
+      { property: "og:description", content: "Bright Skin Journey is an e-commerce application for purchasing skincare products." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Clareador" },
+      { name: "twitter:description", content: "Bright Skin Journey is an e-commerce application for purchasing skincare products." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/fa76ffb2-0035-447c-b0f0-c66290a454b2/id-preview-c116f89e--102004a2-773f-4476-8caa-d49c27368f3d.lovable.app-1779406754081.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/fa76ffb2-0035-447c-b0f0-c66290a454b2/id-preview-c116f89e--102004a2-773f-4476-8caa-d49c27368f3d.lovable.app-1779406754081.png" },
     ],
     links: [
       {
