@@ -236,3 +236,16 @@ function KitCard({ kit, id }: { kit: Kit; id?: string }) {
   }
   return card;
 }
+
+function BuyButton({ kitId }: { kitId: "1" | "2" | "3" }) {
+  const { open } = useCheckout();
+  return (
+    <button
+      type="button"
+      onClick={() => open(kitId)}
+      className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(22,95%,55%)] py-3.5 text-sm font-extrabold uppercase tracking-wide text-white shadow-md transition-transform hover:scale-[1.01]"
+    >
+      <ShoppingCart className="h-4 w-4" /> Comprar agora
+    </button>
+  );
+}
