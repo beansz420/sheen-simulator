@@ -46,10 +46,14 @@ export function CheckoutDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-h-[95vh] max-w-2xl gap-0 overflow-y-auto p-0 sm:rounded-2xl"
+        className="left-0 top-0 flex h-[100dvh] w-screen max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-hidden rounded-none border-0 p-0 sm:left-1/2 sm:top-1/2 sm:h-auto sm:max-h-[92vh] sm:w-full sm:max-w-2xl sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:border"
       >
         <DialogTitle className="sr-only">Checkout</DialogTitle>
-        {kitId && <CheckoutBody kitId={kitId} onClose={() => onOpenChange(false)} />}
+        {kitId && (
+          <div className="flex-1 overflow-y-auto overscroll-contain">
+            <CheckoutBody kitId={kitId} onClose={() => onOpenChange(false)} />
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
@@ -67,18 +71,18 @@ function CheckoutBody({ kitId, onClose }: { kitId: KitId; onClose: () => void })
   }, [kitId]);
 
   return (
-    <div className="bg-[#f4f6fa]">
+    <div className="min-h-full bg-[#f4f6fa] pb-[env(safe-area-inset-bottom)]">
       {/* Você está comprando */}
-      <div className="p-4 sm:p-6">
-        <div className="rounded-2xl bg-white p-4 shadow-sm">
-          <p className="text-sm font-bold" style={{ color: ACCENT }}>
+      <div className="sticky top-0 z-10 border-b border-slate-200/70 bg-[#f4f6fa]/95 px-3 pb-3 pt-3 backdrop-blur sm:px-6 sm:pb-4 sm:pt-5">
+        <div className="rounded-xl bg-white p-3 shadow-sm">
+          <p className="text-[11px] font-bold uppercase tracking-wide" style={{ color: ACCENT }}>
             Você está comprando:
           </p>
-          <div className="mt-3 flex items-center gap-3">
-            <img src={KIT_IMAGES[kit.id]} alt={kit.name} className="h-16 w-16 rounded-lg object-contain" />
+          <div className="mt-2 flex items-center gap-3">
+            <img src={KIT_IMAGES[kit.id]} alt={kit.name} className="h-12 w-12 rounded-lg object-contain" />
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-bold">{kit.name}</p>
-              <p className="text-lg font-extrabold">
+              <p className="text-base font-extrabold">
                 R$ {kit.price.toFixed(2).replace(".", ",")}
               </p>
             </div>
@@ -207,7 +211,7 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
   };
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4 px-4 pb-6 sm:px-6">
+    <form onSubmit={onSubmit} className="space-y-3 px-3 pb-6 pt-3 sm:space-y-4 sm:px-6 sm:pt-4">
       {/* Step 1 - Dados pessoais */}
       <section className="rounded-2xl bg-white p-5 shadow-sm">
         <StepBadge n={1} label="Dados pessoais" />
