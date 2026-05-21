@@ -1,9 +1,11 @@
 import { Star, ShoppingCart, Truck, Zap, Gift, Eye, Volume2, ThumbsUp, Users, ShieldCheck, Award } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import kit1 from "@/assets/kit-1un.jpg";
 import kit2 from "@/assets/kit-2un.jpg";
 import kit3 from "@/assets/kit-3un-serum.jpg";
 
 type Kit = {
+  id: "1" | "2" | "3";
   image: string;
   title: string;
   subtitle: string;
@@ -19,6 +21,7 @@ type Kit = {
 
 const kits: Kit[] = [
   {
+    id: "1",
     image: kit1,
     title: "1 Clareador Dérmico",
     subtitle: "Niacinamida + Ácido Glicólico + Lumin White",
@@ -28,6 +31,7 @@ const kits: Kit[] = [
     badge: { label: "MAIS VENDIDO", tone: "teal" },
   },
   {
+    id: "2",
     image: kit2,
     title: "Kit 2 Clareador Dérmico",
     subtitle: "Niacinamida + Ácido Glicólico + Lumin White",
@@ -40,6 +44,7 @@ const kits: Kit[] = [
     highlighted: true,
   },
   {
+    id: "3",
     image: kit3,
     title: "Kit 3 Clareador Dérmico",
     subtitle: "Niacinamida + Ácido Glicólico + Lumin White",
@@ -213,9 +218,13 @@ function KitCard({ kit, id }: { kit: Kit; id?: string }) {
         </span>
       </div>
 
-      <button className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(22,95%,55%)] py-3.5 text-sm font-extrabold uppercase tracking-wide text-white shadow-md transition-transform hover:scale-[1.01]">
+      <Link
+        to="/checkout"
+        search={{ kit: kit.id }}
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(22,95%,55%)] py-3.5 text-sm font-extrabold uppercase tracking-wide text-white shadow-md transition-transform hover:scale-[1.01]"
+      >
         <ShoppingCart className="h-4 w-4" /> Comprar agora
-      </button>
+      </Link>
     </div>
   );
 
