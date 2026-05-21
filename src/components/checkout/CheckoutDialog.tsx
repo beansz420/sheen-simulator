@@ -601,6 +601,8 @@ function PixStep({ transactionId, onClose }: { transactionId: string; onClose: (
     }).catch((e) => console.error("Meta CAPI failed", e));
     setPurchaseFired(true);
   }, [data, transactionId, purchaseFired, fireMetaEvent]);
+
+  if (isLoading || !data) {
     return (
       <div className="flex items-center justify-center py-16">
         <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
