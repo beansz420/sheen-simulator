@@ -112,7 +112,7 @@ export const createPixOrder = createServerFn({ method: "POST" })
   });
 
 export const getOrderStatus = createServerFn({ method: "GET" })
-  .inputValidator((input: unknown) => z.object({ transaction_id: z.string().uuid() }).parse(input))
+  .inputValidator((input: unknown) => z.object({ transaction_id: z.string().min(1).max(100) }).parse(input))
   .handler(async ({ data }) => {
     const { data: order, error } = await supabaseAdmin
       .from("orders")
