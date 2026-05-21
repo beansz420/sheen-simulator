@@ -262,15 +262,9 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
             required
             maxLength={120}
           />
-          <Field
-            label="E-mail"
-            icon={Mail}
-            type="email"
+          <EmailFieldWithSuggestions
             value={form.customer_email}
-            onChange={set("customer_email")}
-            placeholder="seu@email.com"
-            required
-            maxLength={255}
+            onChange={(v) => setForm((f) => ({ ...f, customer_email: v }))}
           />
           <div className="grid gap-4 sm:grid-cols-2">
             <Field
