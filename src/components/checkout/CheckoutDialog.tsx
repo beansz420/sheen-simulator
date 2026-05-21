@@ -182,33 +182,55 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
     address_number: "",
     address_complement: "",
   });
+  const [cpfError, setCpfError] = useState<string | null>(null);
+  const [cepStatus, setCepStatus] = useState<"idle" | "loading" | "ok" | "error">("idle");
+
   const set =
     (k: keyof typeof form) =>
     (e: React.ChangeEvent<HTMLInputElement>) =>
       setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const lookupCep = async (cep: string) => {
-    const clean = cep.replace(/\D/g, "");
-    if (clean.length !== 8) return;
-    try {
-      const r = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
-      const j = await r.json();
-      if (j.erro) return;
-      setForm((f) => ({
-        ...f,
-        address_street: f.address_street || j.logradouro || "",
-        address_neighborhood: f.address_neighborhood || j.bairro || "",
-        address_city: f.address_city || j.localidade || "",
-        address_state: f.address_state || j.uf || "",
-      }));
-    } catch {
-      // ignore
+  const onCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const masked = maskCPF(e.target.value);
+    setForm((f) => ({ ...f, customer_document: masked }));
+    if (cpfError) setCpfError(null);
+  };
+
+  const onCepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const masked = maskCEP(e.target.value);
+    setForm((f) => ({ ...f, address_cep: masked }));
+    const digits = masked.replace(/\D/g, "");
+    if (digits.length === 8) {
+      lookupCep(masked);
+    } else {
+      setCepStatus("idle");
     }
+  };
+
+  const lookupCep = async (cep: string) => {
+    setCepStatus("loading");
+    const result = await lookupCepViaCep(cep);
+    if (!result) {
+      setCepStatus("error");
+      return;
+    }
+    setCepStatus("ok");
+    setForm((f) => ({
+      ...f,
+      address_street: result.logradouro || f.address_street,
+      address_neighborhood: result.bairro || f.address_neighborhood,
+      address_city: result.localidade || f.address_city,
+      address_state: result.uf || f.address_state,
+    }));
   };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    if (!isValidCPF(form.customer_document)) {
+      setCpfError("CPF inválido. Verifique os números.");
+      return;
+    }
     setLoading(true);
     try {
       const res = await createOrder({ data: { kitId, ...form } });
