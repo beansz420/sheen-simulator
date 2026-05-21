@@ -24,7 +24,7 @@ export function Footer() {
         </div>
         <div>
           <h4 className="mb-3 font-bold">Pagamento</h4>
-          <p className="text-sm text-muted-foreground">PIX, cartão de crédito (até 12x) e boleto.</p>
+          <p className="text-sm text-muted-foreground">PIX.</p>
         </div>
       </div>
       <p className="mt-10 px-4 text-center text-xs text-muted-foreground">
