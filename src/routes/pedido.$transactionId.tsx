@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getOrderStatus } from "@/lib/checkout.functions";
+import { sendMetaEvent } from "@/lib/meta-capi.functions";
+import { fbqTrack, generateEventId } from "@/lib/meta-pixel";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Copy, Loader2, Clock, XCircle } from "lucide-react";
 
@@ -14,7 +16,9 @@ export const Route = createFileRoute("/pedido/$transactionId")({
 function OrderPage() {
   const { transactionId } = Route.useParams();
   const fetchStatus = useServerFn(getOrderStatus);
+  const fireMetaEvent = useServerFn(sendMetaEvent);
   const [copied, setCopied] = useState(false);
+  const [purchaseFired, setPurchaseFired] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["order", transactionId],
