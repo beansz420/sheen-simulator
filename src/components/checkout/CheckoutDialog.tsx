@@ -130,10 +130,14 @@ function StepBadge({ n, label }: { n: number; label: string }) {
 function Field({
   label,
   icon: Icon,
+  error,
+  rightSlot,
   ...props
 }: {
   label: string;
   icon: typeof User;
+  error?: string | null;
+  rightSlot?: React.ReactNode;
 } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div>
@@ -142,10 +146,20 @@ function Field({
         <Icon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <input
           {...props}
-          className="h-11 w-full rounded-lg border border-slate-200 bg-white pl-10 pr-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[color:var(--ring)] focus:outline-none focus:ring-2 focus:ring-[color:var(--ring)]/30"
+          className={`h-11 w-full rounded-lg border bg-white pl-10 pr-9 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
+            error
+              ? "border-red-400 focus:border-red-400 focus:ring-red-200"
+              : "border-slate-200 focus:border-[color:var(--ring)] focus:ring-[color:var(--ring)]/30"
+          }`}
           style={{ ["--ring" as string]: ACCENT }}
         />
+        {rightSlot && (
+          <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
+            {rightSlot}
+          </div>
+        )}
       </div>
+      {error && <p className="mt-1 text-xs font-medium text-red-600">{error}</p>}
     </div>
   );
 }
