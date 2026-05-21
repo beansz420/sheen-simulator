@@ -21,6 +21,7 @@ import {
   CheckCircle2,
   XCircle,
 } from "lucide-react";
+import { maskCPF, maskCEP, maskPhone, isValidCPF, lookupCepViaCep } from "@/lib/br-validators";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { createPixOrder, getOrderStatus } from "@/lib/checkout.functions";
 import { KITS, type KitId } from "@/lib/kits";
