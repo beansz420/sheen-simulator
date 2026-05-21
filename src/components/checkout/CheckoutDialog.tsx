@@ -450,6 +450,78 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
   );
 }
 
+const EMAIL_DOMAINS = [
+  "gmail.com",
+  "hotmail.com",
+  "outlook.com",
+  "yahoo.com.br",
+  "icloud.com",
+  "live.com",
+  "bol.com.br",
+  "uol.com.br",
+];
+
+function EmailFieldWithSuggestions({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const [focused, setFocused] = useState(false);
+  const atIdx = value.indexOf("@");
+  const localPart = atIdx >= 0 ? value.slice(0, atIdx) : value;
+  const domainPart = atIdx >= 0 ? value.slice(atIdx + 1).toLowerCase() : "";
+
+  const suggestions =
+    focused && atIdx >= 0 && localPart.length > 0
+      ? EMAIL_DOMAINS.filter(
+          (d) => (domainPart === "" || d.startsWith(domainPart)) && d !== domainPart
+        ).slice(0, 5)
+      : [];
+
+  return (
+    <div className="relative">
+      <Field
+        label="E-mail"
+        icon={Mail}
+        type="email"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setTimeout(() => setFocused(false), 150)}
+        placeholder="seu@email.com"
+        required
+        autoComplete="email"
+        maxLength={255}
+      />
+      {suggestions.length > 0 && (
+        <ul className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg">
+          {suggestions.map((d) => (
+            <li key={d}>
+              <button
+                type="button"
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  onChange(`${localPart}@${d}`);
+                  setFocused(false);
+                }}
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-slate-50"
+              >
+                <Mail className="h-3.5 w-3.5 text-slate-400" />
+                <span className="truncate">
+                  <span className="text-slate-500">{localPart}@</span>
+                  <span className="font-semibold text-slate-900">{d}</span>
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 function InfoLine({
   icon: Icon,
   title,
