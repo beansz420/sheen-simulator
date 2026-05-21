@@ -474,7 +474,7 @@ function EmailFieldWithSuggestions({
   const domainPart = atIdx >= 0 ? value.slice(atIdx + 1).toLowerCase() : "";
 
   const suggestions =
-    focused && atIdx >= 0 && localPart.length > 0
+    focused && localPart.length > 0
       ? EMAIL_DOMAINS.filter(
           (d) => (domainPart === "" || d.startsWith(domainPart)) && d !== domainPart
         ).slice(0, 5)
