@@ -46,10 +46,14 @@ export function CheckoutDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-h-[95vh] max-w-2xl gap-0 overflow-y-auto p-0 sm:rounded-2xl"
+        className="left-0 top-0 flex h-[100dvh] w-screen max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-hidden rounded-none border-0 p-0 sm:left-1/2 sm:top-1/2 sm:h-auto sm:max-h-[92vh] sm:w-full sm:max-w-2xl sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:border"
       >
         <DialogTitle className="sr-only">Checkout</DialogTitle>
-        {kitId && <CheckoutBody kitId={kitId} onClose={() => onOpenChange(false)} />}
+        {kitId && (
+          <div className="flex-1 overflow-y-auto overscroll-contain">
+            <CheckoutBody kitId={kitId} onClose={() => onOpenChange(false)} />
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
