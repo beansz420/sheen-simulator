@@ -29,7 +29,7 @@ export const Route = createFileRoute("/api/public/pagap-webhook")({
           return new Response("ignored", { status: 200 });
         }
 
-        const update: Record<string, unknown> = { status };
+        const update: { status: string; paid_at?: string } = { status };
         if (status === "paid") update.paid_at = payload.data?.paid_at || new Date().toISOString();
 
         const { error } = await supabaseAdmin
