@@ -1,5 +1,5 @@
 import { Star, ShoppingCart, Truck, Zap, Gift, Eye, Volume2, ThumbsUp, Users, ShieldCheck, Award } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { useCheckout } from "@/components/checkout/CheckoutProvider";
 import kit1 from "@/assets/kit-1un.jpg";
 import kit2 from "@/assets/kit-2un.jpg";
 import kit3 from "@/assets/kit-3un-serum.jpg";
@@ -218,13 +218,7 @@ function KitCard({ kit, id }: { kit: Kit; id?: string }) {
         </span>
       </div>
 
-      <Link
-        to="/checkout"
-        search={{ kit: kit.id }}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(22,95%,55%)] py-3.5 text-sm font-extrabold uppercase tracking-wide text-white shadow-md transition-transform hover:scale-[1.01]"
-      >
-        <ShoppingCart className="h-4 w-4" /> Comprar agora
-      </Link>
+      <BuyButton kitId={kit.id} />
     </div>
   );
 
@@ -241,4 +235,17 @@ function KitCard({ kit, id }: { kit: Kit; id?: string }) {
     );
   }
   return card;
+}
+
+function BuyButton({ kitId }: { kitId: "1" | "2" | "3" }) {
+  const { open } = useCheckout();
+  return (
+    <button
+      type="button"
+      onClick={() => open(kitId)}
+      className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(22,95%,55%)] py-3.5 text-sm font-extrabold uppercase tracking-wide text-white shadow-md transition-transform hover:scale-[1.01]"
+    >
+      <ShoppingCart className="h-4 w-4" /> Comprar agora
+    </button>
+  );
 }

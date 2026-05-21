@@ -5,6 +5,7 @@ import { ProductGallery } from "@/components/site/ProductGallery";
 import { ProductBuyBox } from "@/components/site/ProductBuyBox";
 import { Sections } from "@/components/site/Sections";
 import { Footer } from "@/components/site/Footer";
+import { CheckoutProvider } from "@/components/checkout/CheckoutProvider";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -18,19 +19,21 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <div className="min-h-screen bg-background">
-      <Announcement />
-      <Header />
-      <main>
-        <section className="mx-auto max-w-7xl px-4 py-8">
-          <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
-            <ProductGallery />
-            <ProductBuyBox />
-          </div>
-        </section>
-        <Sections />
-      </main>
-      <Footer />
-    </div>
+    <CheckoutProvider>
+      <div className="min-h-screen bg-background">
+        <Announcement />
+        <Header />
+        <main>
+          <section className="mx-auto max-w-7xl px-4 py-8">
+            <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
+              <ProductGallery />
+              <ProductBuyBox />
+            </div>
+          </section>
+          <Sections />
+        </main>
+        <Footer />
+      </div>
+    </CheckoutProvider>
   );
 }
