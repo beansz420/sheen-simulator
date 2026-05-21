@@ -313,13 +313,19 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
             label="CEP"
             icon={MapPin}
             value={form.address_cep}
-            onChange={(e) => {
-              set("address_cep")(e);
-              lookupCep(e.target.value);
-            }}
+            onChange={onCepChange}
             placeholder="00000-000"
             required
-            maxLength={10}
+            inputMode="numeric"
+            maxLength={9}
+            error={cepStatus === "error" ? "CEP não encontrado." : null}
+            rightSlot={
+              cepStatus === "loading" ? (
+                <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
+              ) : cepStatus === "ok" ? (
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+              ) : null
+            }
           />
           <Field
             label="Estado"
