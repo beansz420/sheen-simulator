@@ -20,13 +20,14 @@ const CheckoutSchema = z.object({
 
 type PagapResponse = {
   success: boolean;
-  transaction_id: string;
-  pix_qrcode: string;
-  pix_qrcode_image: string;
-  pix_copy_paste: string;
-  expires_at: string;
-  amount: number;
+  transaction_id?: string;
+  pix_qrcode?: string;
+  pix_qrcode_image?: string;
+  pix_copy_paste?: string;
+  expires_at?: string;
+  amount?: number;
   message?: string;
+  error?: string;
 };
 
 export const createPixOrder = createServerFn({ method: "POST" })
