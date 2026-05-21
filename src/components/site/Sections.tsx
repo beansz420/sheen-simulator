@@ -136,7 +136,7 @@ export function Sections() {
               <span className="rounded-full bg-success p-1">
                 <Check className="h-4 w-4 text-success-foreground" />
               </span>
-              Cicatriderme resolve TODOS esses problemas em uma única fórmula.
+              Cicatribem resolve TODOS esses problemas em uma única fórmula.
             </p>
           </div>
         </div>
@@ -233,7 +233,7 @@ export function Sections() {
 
       {/* Guarantees */}
       <section className="mx-auto max-w-6xl px-4">
-        <h2 className="mb-12 text-center text-3xl font-extrabold md:text-4xl">Garantias Cicatriderme</h2>
+        <h2 className="mb-12 text-center text-3xl font-extrabold md:text-4xl">Garantias Cicatribem</h2>
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           {guarantees.map(({ i: Icon, t, d }) => (
             <div key={t} className="rounded-2xl border bg-card p-6 text-center shadow-sm">

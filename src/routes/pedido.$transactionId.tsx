@@ -10,7 +10,7 @@ import { CheckCircle2, Copy, Loader2, Clock, XCircle } from "lucide-react";
 
 export const Route = createFileRoute("/pedido/$transactionId")({
   component: OrderPage,
-  head: () => ({ meta: [{ title: "Pagamento Pix — Cicatriderme" }] }),
+  head: () => ({ meta: [{ title: "Pagamento Pix — Cicatribem" }] }),
 });
 
 function OrderPage() {
