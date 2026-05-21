@@ -277,19 +277,29 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
               label="CPF"
               icon={ShieldAlert}
               value={form.customer_document}
-              onChange={set("customer_document")}
+              onChange={onCpfChange}
               placeholder="000.000.000-00"
               required
-              maxLength={20}
+              inputMode="numeric"
+              maxLength={14}
+              error={cpfError}
+              rightSlot={
+                isValidCPF(form.customer_document) ? (
+                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                ) : null
+              }
             />
             <Field
               label="Celular"
               icon={Phone}
               value={form.customer_phone}
-              onChange={set("customer_phone")}
-              placeholder="(00) 0 0000-0000"
+              onChange={(e) =>
+                setForm((f) => ({ ...f, customer_phone: maskPhone(e.target.value) }))
+              }
+              placeholder="(00) 00000-0000"
               required
-              maxLength={20}
+              inputMode="tel"
+              maxLength={16}
             />
           </div>
         </div>
