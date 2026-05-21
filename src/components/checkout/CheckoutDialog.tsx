@@ -24,6 +24,8 @@ import {
 import { maskCPF, maskCEP, maskPhone, isValidCPF, lookupCepViaCep } from "@/lib/br-validators";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { createPixOrder, getOrderStatus } from "@/lib/checkout.functions";
+import { sendMetaEvent } from "@/lib/meta-capi.functions";
+import { fbqTrack, generateEventId } from "@/lib/meta-pixel";
 import { KITS, type KitId } from "@/lib/kits";
 import kit1 from "@/assets/kit-1un.jpg";
 import kit2 from "@/assets/kit-2un.jpg";
@@ -556,7 +558,9 @@ function PixIcon() {
 
 function PixStep({ transactionId, onClose }: { transactionId: string; onClose: () => void }) {
   const fetchStatus = useServerFn(getOrderStatus);
+  const fireMetaEvent = useServerFn(sendMetaEvent);
   const [copied, setCopied] = useState(false);
+  const [purchaseFired, setPurchaseFired] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["order", transactionId],
@@ -570,7 +574,33 @@ function PixStep({ transactionId, onClose }: { transactionId: string; onClose: (
     },
   });
 
-  if (isLoading || !data) {
+  // Dispara Purchase (Pixel + CAPI) quando pagamento confirmado
+  useEffect(() => {
+    if (purchaseFired) return;
+    if (!data?.ok) return;
+    if (data.order.status !== "paid") return;
+    const eventId = generateEventId();
+    fbqTrack(
+      "Purchase",
+      {
+        currency: "BRL",
+        value: Number(data.order.amount),
+        content_ids: [transactionId],
+        content_type: "product",
+      },
+      eventId,
+    );
+    void fireMetaEvent({
+      data: {
+        event_name: "Purchase",
+        event_id: eventId,
+        transaction_id: transactionId,
+        event_source_url: typeof window !== "undefined" ? window.location.href : undefined,
+        user_agent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
+      },
+    }).catch((e) => console.error("Meta CAPI failed", e));
+    setPurchaseFired(true);
+  }, [data, transactionId, purchaseFired, fireMetaEvent]);
     return (
       <div className="flex items-center justify-center py-16">
         <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
