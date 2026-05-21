@@ -21,6 +21,7 @@ import {
   CheckCircle2,
   XCircle,
 } from "lucide-react";
+import { maskCPF, maskCEP, maskPhone, isValidCPF, lookupCepViaCep } from "@/lib/br-validators";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { createPixOrder, getOrderStatus } from "@/lib/checkout.functions";
 import { KITS, type KitId } from "@/lib/kits";
@@ -129,10 +130,14 @@ function StepBadge({ n, label }: { n: number; label: string }) {
 function Field({
   label,
   icon: Icon,
+  error,
+  rightSlot,
   ...props
 }: {
   label: string;
   icon: typeof User;
+  error?: string | null;
+  rightSlot?: React.ReactNode;
 } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div>
@@ -141,10 +146,20 @@ function Field({
         <Icon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <input
           {...props}
-          className="h-11 w-full rounded-lg border border-slate-200 bg-white pl-10 pr-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[color:var(--ring)] focus:outline-none focus:ring-2 focus:ring-[color:var(--ring)]/30"
+          className={`h-11 w-full rounded-lg border bg-white pl-10 pr-9 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
+            error
+              ? "border-red-400 focus:border-red-400 focus:ring-red-200"
+              : "border-slate-200 focus:border-[color:var(--ring)] focus:ring-[color:var(--ring)]/30"
+          }`}
           style={{ ["--ring" as string]: ACCENT }}
         />
+        {rightSlot && (
+          <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
+            {rightSlot}
+          </div>
+        )}
       </div>
+      {error && <p className="mt-1 text-xs font-medium text-red-600">{error}</p>}
     </div>
   );
 }
@@ -167,33 +182,55 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
     address_number: "",
     address_complement: "",
   });
+  const [cpfError, setCpfError] = useState<string | null>(null);
+  const [cepStatus, setCepStatus] = useState<"idle" | "loading" | "ok" | "error">("idle");
+
   const set =
     (k: keyof typeof form) =>
     (e: React.ChangeEvent<HTMLInputElement>) =>
       setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const lookupCep = async (cep: string) => {
-    const clean = cep.replace(/\D/g, "");
-    if (clean.length !== 8) return;
-    try {
-      const r = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
-      const j = await r.json();
-      if (j.erro) return;
-      setForm((f) => ({
-        ...f,
-        address_street: f.address_street || j.logradouro || "",
-        address_neighborhood: f.address_neighborhood || j.bairro || "",
-        address_city: f.address_city || j.localidade || "",
-        address_state: f.address_state || j.uf || "",
-      }));
-    } catch {
-      // ignore
+  const onCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const masked = maskCPF(e.target.value);
+    setForm((f) => ({ ...f, customer_document: masked }));
+    if (cpfError) setCpfError(null);
+  };
+
+  const onCepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const masked = maskCEP(e.target.value);
+    setForm((f) => ({ ...f, address_cep: masked }));
+    const digits = masked.replace(/\D/g, "");
+    if (digits.length === 8) {
+      lookupCep(masked);
+    } else {
+      setCepStatus("idle");
     }
+  };
+
+  const lookupCep = async (cep: string) => {
+    setCepStatus("loading");
+    const result = await lookupCepViaCep(cep);
+    if (!result) {
+      setCepStatus("error");
+      return;
+    }
+    setCepStatus("ok");
+    setForm((f) => ({
+      ...f,
+      address_street: result.logradouro || f.address_street,
+      address_neighborhood: result.bairro || f.address_neighborhood,
+      address_city: result.localidade || f.address_city,
+      address_state: result.uf || f.address_state,
+    }));
   };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    if (!isValidCPF(form.customer_document)) {
+      setCpfError("CPF inválido. Verifique os números.");
+      return;
+    }
     setLoading(true);
     try {
       const res = await createOrder({ data: { kitId, ...form } });
@@ -240,19 +277,29 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
               label="CPF"
               icon={ShieldAlert}
               value={form.customer_document}
-              onChange={set("customer_document")}
+              onChange={onCpfChange}
               placeholder="000.000.000-00"
               required
-              maxLength={20}
+              inputMode="numeric"
+              maxLength={14}
+              error={cpfError}
+              rightSlot={
+                isValidCPF(form.customer_document) ? (
+                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                ) : null
+              }
             />
             <Field
               label="Celular"
               icon={Phone}
               value={form.customer_phone}
-              onChange={set("customer_phone")}
-              placeholder="(00) 0 0000-0000"
+              onChange={(e) =>
+                setForm((f) => ({ ...f, customer_phone: maskPhone(e.target.value) }))
+              }
+              placeholder="(00) 00000-0000"
               required
-              maxLength={20}
+              inputMode="tel"
+              maxLength={16}
             />
           </div>
         </div>
@@ -266,13 +313,19 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
             label="CEP"
             icon={MapPin}
             value={form.address_cep}
-            onChange={(e) => {
-              set("address_cep")(e);
-              lookupCep(e.target.value);
-            }}
+            onChange={onCepChange}
             placeholder="00000-000"
             required
-            maxLength={10}
+            inputMode="numeric"
+            maxLength={9}
+            error={cepStatus === "error" ? "CEP não encontrado." : null}
+            rightSlot={
+              cepStatus === "loading" ? (
+                <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
+              ) : cepStatus === "ok" ? (
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+              ) : null
+            }
           />
           <Field
             label="Estado"
