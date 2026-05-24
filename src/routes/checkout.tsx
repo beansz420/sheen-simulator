@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Loader2, ShieldCheck } from "lucide-react";
 
-const searchSchema = z.object({ kit: z.string().optional() });
+const searchSchema = z.object({ kit: z.coerce.string().optional() });
 
 export const Route = createFileRoute("/checkout")({
   validateSearch: searchSchema,
