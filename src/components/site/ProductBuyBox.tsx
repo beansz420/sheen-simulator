@@ -224,7 +224,7 @@ function KitCard({ kit, id }: { kit: Kit; id?: string }) {
     return (
       <div className="rounded-2xl border-2 border-success p-1.5 pt-0">
         <div className="-mx-1.5 -mt-3 mb-1 flex justify-center">
-          <span className="rounded-full bg-promo px-4 py-1 text-[11px] font-bold uppercase tracking-wide text-white shadow">
+          <span className="rounded-full bg-[hsl(22,95%,55%)] px-4 py-1 text-[11px] font-bold uppercase tracking-wide text-white shadow">
             {kit.ribbon}
           </span>
         </div>
