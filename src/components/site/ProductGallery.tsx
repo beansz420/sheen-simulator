@@ -31,6 +31,9 @@ export function ProductGallery() {
           className="aspect-square w-full object-cover animate-in fade-in duration-300"
           width={1024}
           height={1024}
+          loading={i === 0 ? "eager" : "lazy"}
+          decoding="async"
+          fetchPriority={i === 0 ? "high" : "auto"}
         />
 
         <button
