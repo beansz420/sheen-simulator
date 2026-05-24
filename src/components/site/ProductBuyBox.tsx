@@ -223,9 +223,9 @@ function KitCard({ kit, id }: { kit: Kit; id?: string }) {
   if (kit.highlighted) {
     return (
       <div className="rounded-2xl border-2 border-success p-1.5 pt-0">
-        <div className="-mx-1.5 -mt-4 mb-2 flex justify-center">
-          <span className="rounded-full bg-success px-5 py-1.5 text-sm font-extrabold uppercase tracking-wider text-success-foreground shadow-lg ring-2 ring-success/30">
-            ★ {kit.ribbon} ★
+        <div className="-mx-1.5 -mt-3 mb-1 flex justify-center">
+          <span className="rounded-full bg-promo px-4 py-1 text-[11px] font-bold uppercase tracking-wide text-white shadow">
+            {kit.ribbon}
           </span>
         </div>
         {card}
