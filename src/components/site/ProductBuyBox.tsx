@@ -33,7 +33,7 @@ const kits: Kit[] = [
   {
     id: "2",
     image: kit2,
-    title: "Kit 2 Clareador Dérmico",
+    title: "Kit 2 Clareadores Dérmicos",
     subtitle: "Niacinamida + Ácido Glicólico + Lumin White",
     price: "R$ 79,90",
     oldPrice: "R$ 179,80",
@@ -46,7 +46,7 @@ const kits: Kit[] = [
   {
     id: "3",
     image: kit3,
-    title: "Kit 3 Clareador Dérmico",
+    title: "Kit 3 Clareadores Dérmicos",
     subtitle: "Niacinamida + Ácido Glicólico + Lumin White",
     price: "R$ 99,90",
     oldPrice: "R$ 269,70",
