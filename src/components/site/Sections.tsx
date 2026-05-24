@@ -5,10 +5,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import reviewForehead from "@/assets/review-forehead.jpg";
-import reviewArmpit from "@/assets/review-armpit.jpg";
-import reviewKit from "@/assets/review-kit.jpg";
-import reviewTube from "@/assets/review-tube.jpg";
+import reviewForehead from "@/assets/review-forehead.webp";
+import reviewArmpit from "@/assets/review-armpit.webp";
+import reviewKit from "@/assets/review-kit.webp";
+import reviewTube from "@/assets/review-tube.webp";
 
 const problems = [
   "Manchas escuras difíceis de uniformizar",

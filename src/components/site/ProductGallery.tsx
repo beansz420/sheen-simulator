@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import img1 from "@/assets/gallery-clareador-tube.jpg";
+import img1 from "@/assets/gallery-clareador-tube.webp";
 import img2 from "@/assets/gallery-clareador-model.webp";
 import img3 from "@/assets/gallery-clareador-blue.webp";
 import img4 from "@/assets/gallery-clareador-leg.webp";
 import img5 from "@/assets/gallery-regenerador.webp";
-import img6 from "@/assets/gallery-serum.jpg";
+import img6 from "@/assets/gallery-serum.webp";
 
 const slides = [
   { src: img1, alt: "Clareador Dérmico - embalagem" },
@@ -31,6 +31,9 @@ export function ProductGallery() {
           className="aspect-square w-full object-cover animate-in fade-in duration-300"
           width={1024}
           height={1024}
+          loading={i === 0 ? "eager" : "lazy"}
+          decoding="async"
+          fetchPriority={i === 0 ? "high" : "auto"}
         />
 
         <button

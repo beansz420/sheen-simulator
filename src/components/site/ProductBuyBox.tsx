@@ -1,8 +1,8 @@
 import { Star, ShoppingCart, Truck, Zap, Gift, Eye, Volume2, ThumbsUp, Users, ShieldCheck, Award } from "lucide-react";
 import { useCheckout } from "@/components/checkout/CheckoutProvider";
-import kit1 from "@/assets/kit-1un.jpg";
-import kit2 from "@/assets/kit-2un.jpg";
-import kit3 from "@/assets/kit-3un-serum.jpg";
+import kit1 from "@/assets/kit-1un.webp";
+import kit2 from "@/assets/kit-2un.webp";
+import kit3 from "@/assets/kit-3un-serum.webp";
 
 type Kit = {
   id: "1" | "2" | "3";
