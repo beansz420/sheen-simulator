@@ -21,16 +21,6 @@ type Kit = {
 
 const kits: Kit[] = [
   {
-    id: "1",
-    image: kit1,
-    title: "1 Clareador Dérmico",
-    subtitle: "Niacinamida + Ácido Glicólico + Lumin White",
-    price: "R$ 49,90",
-    oldPrice: "R$ 89,90",
-    off: "-44% OFF",
-    badge: { label: "MAIS VENDIDO", tone: "teal" },
-  },
-  {
     id: "2",
     image: kit2,
     title: "Kit 2 Clareadores Dérmicos",
@@ -54,6 +44,16 @@ const kits: Kit[] = [
     perUnit: "(R$ 33,30/un)",
     badge: { label: "BRINDE EXCLUSIVO", tone: "teal" },
     bonus: "+ Sérum Facial Hidratante de BRINDE",
+  },
+  {
+    id: "1",
+    image: kit1,
+    title: "1 Clareador Dérmico",
+    subtitle: "Niacinamida + Ácido Glicólico + Lumin White",
+    price: "R$ 49,90",
+    oldPrice: "R$ 89,90",
+    off: "-44% OFF",
+    badge: { label: "MAIS VENDIDO", tone: "teal" },
   },
 ];
 
