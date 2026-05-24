@@ -27,9 +27,9 @@ import { createPixOrder, getOrderStatus } from "@/lib/checkout.functions";
 import { sendMetaEvent } from "@/lib/meta-capi.functions";
 import { fbqTrack, generateEventId } from "@/lib/meta-pixel";
 import { KITS, type KitId } from "@/lib/kits";
-import kit1 from "@/assets/kit-1un.jpg";
-import kit2 from "@/assets/kit-2un.jpg";
-import kit3 from "@/assets/kit-3un-serum.jpg";
+import kit1 from "@/assets/kit-1un.webp";
+import kit2 from "@/assets/kit-2un.webp";
+import kit3 from "@/assets/kit-3un-serum.webp";
 
 const KIT_IMAGES: Record<KitId, string> = { "1": kit1, "2": kit2, "3": kit3 };
 
