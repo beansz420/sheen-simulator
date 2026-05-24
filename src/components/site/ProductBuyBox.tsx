@@ -51,7 +51,9 @@ const kits: Kit[] = [
     oldPrice: "R$ 269,70",
     off: "-63% OFF",
     perUnit: "(R$ 33,30/un)",
-    badge: { label: "MAIS VENDIDO", tone: "teal" },
+    badge: { label: "BRINDE EXCLUSIVO", tone: "teal" },
+    ribbon: "MAIS VENDIDO",
+    highlighted: true,
     bonus: "+ Sérum Facial Hidratante de BRINDE",
   },
 ];
