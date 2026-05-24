@@ -39,7 +39,7 @@ const kits: Kit[] = [
     off: "-56% OFF",
     perUnit: "(R$ 39,95/un)",
     badge: { label: "MELHOR CUSTO-BENEFÍCIO", tone: "green" },
-    ribbon: "RECOMENDADO — MAIOR ECONOMIA",
+    ribbon: "MAIS VENDIDO",
     highlighted: true,
   },
   {
@@ -52,8 +52,6 @@ const kits: Kit[] = [
     off: "-63% OFF",
     perUnit: "(R$ 33,30/un)",
     badge: { label: "BRINDE EXCLUSIVO", tone: "teal" },
-    ribbon: "MAIS VENDIDO",
-    highlighted: true,
     bonus: "+ Sérum Facial Hidratante de BRINDE",
   },
 ];
