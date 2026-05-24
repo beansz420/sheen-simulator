@@ -6,6 +6,7 @@ import { ProductBuyBox } from "@/components/site/ProductBuyBox";
 import { Sections } from "@/components/site/Sections";
 import { Footer } from "@/components/site/Footer";
 import { CheckoutProvider } from "@/components/checkout/CheckoutProvider";
+import heroImg from "@/assets/gallery-clareador-tube.webp";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -13,6 +14,9 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "Clareador Dérmico Cicatribem — Manchas, Axilas e Virilha" },
       { name: "description", content: "Creme clareador Cicatribem para melasma, axilas, virilha e rosto. Fórmula com Lumin White™, Niacinamida e Ácido Glicólico. Frete grátis." },
+    ],
+    links: [
+      { rel: "preload", as: "image", href: heroImg, fetchpriority: "high" },
     ],
   }),
 });
