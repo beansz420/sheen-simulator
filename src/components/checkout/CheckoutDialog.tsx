@@ -21,6 +21,8 @@ import {
   CheckCircle2,
   XCircle,
   ArrowLeft,
+  Truck,
+  Tag,
 } from "lucide-react";
 import { maskCPF, maskCEP, maskPhone, isValidCPF, lookupCepViaCep } from "@/lib/br-validators";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
