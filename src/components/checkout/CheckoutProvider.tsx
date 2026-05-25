@@ -44,6 +44,14 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
     // Ensure chunk is loaded before showing
     if (!primed) void import("./CheckoutDialog");
     const kit = KITS[k];
+    fbqTrack("AddToCart", {
+      content_ids: [kit.id],
+      content_name: kit.name,
+      content_type: "product",
+      currency: "BRL",
+      value: kit.price,
+      num_items: kit.quantity,
+    });
     fbqTrack("InitiateCheckout", {
       content_ids: [kit.id],
       content_name: kit.name,
