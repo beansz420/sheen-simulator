@@ -34,6 +34,15 @@ import kit3 from "@/assets/kit-3un-serum.webp";
 
 const KIT_IMAGES: Record<KitId, string> = { "1": kit1, "2": kit2, "3": kit3 };
 
+// Preço "de" simulado para mostrar economia (promoção)
+const KIT_ORIGINAL_PRICE: Record<KitId, number> = {
+  "1": 89.9,
+  "2": 159.8,
+  "3": 239.7,
+};
+
+const brl = (n: number) => `R$ ${n.toFixed(2).replace(".", ",")}`;
+
 const ACCENT = "hsl(195, 80%, 50%)"; // cyan blue matching reference
 
 type Step = "form" | "pix";
