@@ -167,15 +167,17 @@ export function ProductBuyBox() {
 function KitCard({ kit, id }: { kit: Kit; id?: string }) {
   const card = (
     <div id={id} className="rounded-2xl border border-border bg-background p-4 shadow-sm scroll-mt-24">
-      <div>
-        <span
-          className={`inline-block rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white ${
-            kit.badge?.tone === "green" ? "bg-success" : "bg-[hsl(178,60%,45%)]"
-          }`}
-        >
-          {kit.badge?.label}
-        </span>
-      </div>
+      {kit.badge && (
+        <div>
+          <span
+            className={`inline-block rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white ${
+              kit.badge.tone === "green" ? "bg-success" : "bg-[hsl(178,60%,45%)]"
+            }`}
+          >
+            {kit.badge.label}
+          </span>
+        </div>
+      )}
 
       <div className="mt-3 flex gap-4">
         <img
