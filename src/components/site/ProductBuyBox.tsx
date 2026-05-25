@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { Star, ShoppingCart, Truck, Zap, Gift, Eye, Volume2, ThumbsUp, Users, ShieldCheck, Award } from "lucide-react";
 import { useCheckout } from "@/components/checkout/CheckoutProvider";
+import { fbqTrack } from "@/lib/meta-pixel";
 import kit1 from "@/assets/kit-1un.webp";
 import kit2 from "@/assets/kit-2un.webp";
 import kit3 from "@/assets/kit-3un-serum.webp";
@@ -56,6 +58,17 @@ const kits: Kit[] = [
 ];
 
 export function ProductBuyBox() {
+  // Meta Pixel: ViewContent ao visualizar a página do produto
+  useEffect(() => {
+    fbqTrack("ViewContent", {
+      content_ids: ["clareador-dermico-cicatribem"],
+      content_name: "Clareador Dérmico Cicatribem",
+      content_type: "product",
+      currency: "BRL",
+      value: 49.9,
+    });
+  }, []);
+
   return (
     <div className="space-y-5">
       {/* Live viewers + sound */}
