@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { Star, ShoppingCart, Truck, Zap, Gift, Eye, Volume2, ThumbsUp, Users, ShieldCheck, Award } from "lucide-react";
 import { useCheckout } from "@/components/checkout/CheckoutProvider";
+import { fbqTrack } from "@/lib/meta-pixel";
 import kit1 from "@/assets/kit-1un.webp";
 import kit2 from "@/assets/kit-2un.webp";
 import kit3 from "@/assets/kit-3un-serum.webp";
