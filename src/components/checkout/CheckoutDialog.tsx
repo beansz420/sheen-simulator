@@ -20,6 +20,7 @@ import {
   Copy,
   CheckCircle2,
   XCircle,
+  ArrowLeft,
 } from "lucide-react";
 import { maskCPF, maskCEP, maskPhone, isValidCPF, lookupCepViaCep } from "@/lib/br-validators";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -77,6 +78,17 @@ function CheckoutBody({ kitId, onClose }: { kitId: KitId; onClose: () => void })
     <div className="min-h-full bg-[#f4f6fa] pb-[env(safe-area-inset-bottom)]">
       {/* Você está comprando */}
       <div className="sticky top-0 z-10 border-b border-slate-200/70 bg-[#f4f6fa]/95 px-3 pb-3 pt-3 backdrop-blur sm:px-6 sm:pb-4 sm:pt-5">
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Voltar ao produto"
+            className="inline-flex items-center gap-1.5 rounded-full border border-slate-300 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Voltar ao produto</span>
+          </button>
+        </div>
         <div className="rounded-xl bg-white p-3 shadow-sm">
           <p className="text-[11px] font-bold uppercase tracking-wide" style={{ color: ACCENT }}>
             Você está comprando:
