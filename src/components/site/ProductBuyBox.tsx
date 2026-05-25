@@ -58,6 +58,17 @@ const kits: Kit[] = [
 ];
 
 export function ProductBuyBox() {
+  // Meta Pixel: ViewContent ao visualizar a página do produto
+  useEffect(() => {
+    fbqTrack("ViewContent", {
+      content_ids: ["clareador-dermico-cicatribem"],
+      content_name: "Clareador Dérmico Cicatribem",
+      content_type: "product",
+      currency: "BRL",
+      value: 49.9,
+    });
+  }, []);
+
   return (
     <div className="space-y-5">
       {/* Live viewers + sound */}
