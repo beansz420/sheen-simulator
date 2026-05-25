@@ -106,10 +106,32 @@ function CheckoutBody({ kitId, onClose }: { kitId: KitId; onClose: () => void })
             <img src={KIT_IMAGES[kit.id]} alt={kit.name} className="h-12 w-12 rounded-lg object-contain" />
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-bold">{kit.name}</p>
-              <p className="text-base font-extrabold">
-                R$ {kit.price.toFixed(2).replace(".", ",")}
-              </p>
+              <div className="flex flex-wrap items-baseline gap-x-2">
+                <span className="text-xs text-slate-400 line-through">
+                  {brl(KIT_ORIGINAL_PRICE[kit.id])}
+                </span>
+                <span className="text-base font-extrabold text-slate-900">
+                  {brl(kit.price)}
+                </span>
+                <span className="rounded-full bg-red-100 px-1.5 py-0.5 text-[10px] font-bold text-red-700">
+                  -{Math.round((1 - kit.price / KIT_ORIGINAL_PRICE[kit.id]) * 100)}%
+                </span>
+              </div>
             </div>
+          </div>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-700">
+              <Truck className="h-3 w-3" /> Frete grátis
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-amber-700">
+              <Tag className="h-3 w-3" /> Promoção por tempo limitado
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-sky-700">
+              <ShieldCheck className="h-3 w-3" /> Garantia 7 dias
+            </span>
+          </div>
+          <div className="mt-2 rounded-md bg-emerald-50/70 px-2 py-1.5 text-center text-[11px] font-bold text-emerald-700">
+            🎉 Você economiza {brl(KIT_ORIGINAL_PRICE[kit.id] - kit.price)} nesta compra!
           </div>
         </div>
       </div>
