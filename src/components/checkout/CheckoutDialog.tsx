@@ -459,12 +459,29 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
           </InfoLine>
         </div>
 
-        <p className="mt-5 text-sm">
-          <span className="font-bold" style={{ color: ACCENT }}>Valor total:</span>{" "}
-          <span className="font-extrabold" style={{ color: ACCENT }}>
-            R$ {kit.price.toFixed(2).replace(".", ",")}
-          </span>
-        </p>
+        <div className="mt-5 space-y-1.5 rounded-lg bg-slate-50 p-3 text-sm">
+          <div className="flex justify-between text-slate-500">
+            <span>De</span>
+            <span className="line-through">{brl(KIT_ORIGINAL_PRICE[kit.id])}</span>
+          </div>
+          <div className="flex justify-between text-emerald-700">
+            <span className="font-semibold">Desconto</span>
+            <span className="font-bold">- {brl(KIT_ORIGINAL_PRICE[kit.id] - kit.price)}</span>
+          </div>
+          <div className="flex justify-between text-emerald-700">
+            <span className="font-semibold">Frete</span>
+            <span className="font-bold">Grátis</span>
+          </div>
+          <div className="flex items-baseline justify-between border-t border-slate-200 pt-2">
+            <span className="font-bold" style={{ color: ACCENT }}>Valor total:</span>
+            <span className="text-lg font-extrabold" style={{ color: ACCENT }}>
+              {brl(kit.price)}
+            </span>
+          </div>
+          <p className="pt-1 text-center text-[11px] font-bold text-emerald-700">
+            🎉 Você está economizando {brl(KIT_ORIGINAL_PRICE[kit.id] - kit.price)} ({Math.round((1 - kit.price / KIT_ORIGINAL_PRICE[kit.id]) * 100)}% OFF)
+          </p>
+        </div>
 
         {error && (
           <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
