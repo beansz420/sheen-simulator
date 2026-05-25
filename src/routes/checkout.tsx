@@ -82,10 +82,15 @@ function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-          <Link to="/" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="h-4 w-4" /> Voltar à loja
+      <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-2 text-sm font-semibold text-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+            aria-label="Voltar à página do produto"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Voltar ao produto</span>
           </Link>
           <span className="flex items-center gap-1.5 text-xs font-semibold text-success">
             <ShieldCheck className="h-4 w-4" /> Pagamento seguro
