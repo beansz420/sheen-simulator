@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { sendMetaCapiEvent, purchaseEventId } from "@/lib/meta-capi.server";
 
 type WebhookPayload = {
   event: string;
@@ -29,6 +30,13 @@ export const Route = createFileRoute("/api/public/pagap-webhook")({
           return new Response("ignored", { status: 200 });
         }
 
+        // Read current status to fire Meta Purchase only on the paid transition
+        const { data: current } = await supabaseAdmin
+          .from("orders")
+          .select("status")
+          .eq("transaction_id", txId)
+          .maybeSingle();
+
         const update: { status: string; paid_at?: string } = { status };
         if (status === "paid") update.paid_at = payload.data?.paid_at || new Date().toISOString();
 
@@ -41,6 +49,17 @@ export const Route = createFileRoute("/api/public/pagap-webhook")({
           console.error("webhook update error:", error);
           return new Response("db error", { status: 500 });
         }
+
+        // Fire Meta Purchase via CAPI server-side. Deterministic event_id
+        // (purchase_<txId>) deduplicates with the browser Pixel event.
+        if (status === "paid" && current?.status !== "paid") {
+          await sendMetaCapiEvent({
+            event_name: "Purchase",
+            event_id: purchaseEventId(txId),
+            transaction_id: txId,
+          }).catch((e) => console.error("[meta-capi] webhook purchase failed", e));
+        }
+
         return new Response("ok", { status: 200 });
       },
     },

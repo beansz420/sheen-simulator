@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getOrderStatus } from "@/lib/checkout.functions";
 import { sendMetaEvent } from "@/lib/meta-capi.functions";
-import { fbqTrack, generateEventId } from "@/lib/meta-pixel";
+import { fbqTrack } from "@/lib/meta-pixel";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Copy, Loader2, Clock, XCircle } from "lucide-react";
 
@@ -37,7 +37,9 @@ function OrderPage() {
     if (purchaseFired) return;
     if (!data?.ok) return;
     if (data.order.status !== "paid") return;
-    const eventId = generateEventId();
+    // Deterministic event_id matches the webhook's CAPI call so Meta
+    // deduplicates the browser Pixel + server CAPI events.
+    const eventId = `purchase_${transactionId}`;
     fbqTrack(
       "Purchase",
       {
@@ -48,6 +50,8 @@ function OrderPage() {
       },
       eventId,
     );
+    // Also send CAPI from the browser (improves EMQ with user_agent + URL).
+    // Webhook fires CAPI too; Meta dedups by event_id + event_name.
     void fireMetaEvent({
       data: {
         event_name: "Purchase",
