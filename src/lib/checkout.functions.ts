@@ -102,7 +102,11 @@ export const createPixOrder = createServerFn({ method: "POST" })
           customer_document: data.customer_document.replace(/\D/g, ""),
           customer_phone: data.customer_phone.replace(/\D/g, ""),
           items: [{ name: kit.name, quantity: kit.quantity, price: kit.price }],
+          ...(data.tracking_parameters && Object.keys(data.tracking_parameters).length > 0
+            ? { tracking_parameters: data.tracking_parameters }
+            : {}),
         }),
+
         signal: controller.signal,
       }).finally(() => clearTimeout(timeout));
 
