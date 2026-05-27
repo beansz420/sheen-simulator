@@ -280,7 +280,9 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
     }
     setLoading(true);
     try {
-      const res = await createOrder({ data: { kitId, ...form } });
+      const tracking = getTracking();
+      const res = await createOrder({ data: { kitId, ...form, tracking_parameters: tracking } });
+
       if (!res.ok) {
         setError(res.error);
         setLoading(false);
