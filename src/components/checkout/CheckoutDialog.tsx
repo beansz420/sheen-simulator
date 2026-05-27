@@ -27,6 +27,8 @@ import {
 import { maskCPF, maskCEP, maskPhone, isValidCPF, lookupCepViaCep } from "@/lib/br-validators";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { createPixOrder, getOrderStatus } from "@/lib/checkout.functions";
+import { getTracking } from "@/lib/tracking";
+
 import { KITS, type KitId } from "@/lib/kits";
 import kit1 from "@/assets/kit-1un.webp";
 import kit2 from "@/assets/kit-2un.webp";
@@ -278,7 +280,9 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
     }
     setLoading(true);
     try {
-      const res = await createOrder({ data: { kitId, ...form } });
+      const tracking = getTracking();
+      const res = await createOrder({ data: { kitId, ...form, tracking_parameters: tracking } });
+
       if (!res.ok) {
         setError(res.error);
         setLoading(false);
