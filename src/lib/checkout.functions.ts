@@ -3,6 +3,21 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { KITS, type KitId } from "./kits";
 
+const TrackingSchema = z
+  .object({
+    utm_source: z.string().max(255).optional(),
+    utm_campaign: z.string().max(255).optional(),
+    utm_medium: z.string().max(255).optional(),
+    utm_content: z.string().max(255).optional(),
+    utm_term: z.string().max(255).optional(),
+    fbclid: z.string().max(500).optional(),
+    gclid: z.string().max(500).optional(),
+    kclid: z.string().max(500).optional(),
+    src: z.string().max(255).optional(),
+    sck: z.string().max(255).optional(),
+  })
+  .optional();
+
 const CheckoutSchema = z.object({
   kitId: z.enum(["1", "2", "3"]),
   customer_name: z.string().trim().min(2).max(120),
@@ -16,7 +31,9 @@ const CheckoutSchema = z.object({
   address_neighborhood: z.string().trim().min(2).max(120),
   address_city: z.string().trim().min(2).max(120),
   address_state: z.string().trim().length(2),
+  tracking_parameters: TrackingSchema,
 });
+
 
 type PagapResponse = {
   success: boolean;
