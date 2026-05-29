@@ -1,12 +1,9 @@
-import { Search, User, ShoppingBag, Menu } from "lucide-react";
+import { Search, User, ShoppingBag } from "lucide-react";
 
 export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center gap-6 px-4 py-4">
-        <button className="lg:hidden" aria-label="Menu">
-          <Menu className="h-6 w-6 text-primary" />
-        </button>
         <a href="/" className="text-2xl font-black tracking-tight text-primary">
           CICATRIBEM
         </a>
