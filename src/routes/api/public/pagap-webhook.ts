@@ -89,6 +89,7 @@ export const Route = createFileRoute("/api/public/pagap-webhook")({
             event_name: "Purchase",
             event_id: purchaseEventId(txId),
             transaction_id: txId,
+            event_source_url: `https://clareador.com/pedido/${txId}`,
           }).catch((e) => console.error("[meta-capi] webhook purchase failed", e));
         }
 
