@@ -38,6 +38,21 @@ export function markTrackedPurchase(transactionId: string) {
   }
 }
 
+function readCookie(name: string) {
+  if (typeof document === "undefined") return undefined;
+  return document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(`${name}=`))
+    ?.split("=")[1];
+}
+
+export function getMetaBrowserIds() {
+  return {
+    fbp: readCookie("_fbp"),
+    fbc: readCookie("_fbc"),
+  };
+}
+
 export function fbqTrack(
   event: string,
   params?: Record<string, unknown>,
