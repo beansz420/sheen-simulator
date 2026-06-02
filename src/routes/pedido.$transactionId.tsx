@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getOrderStatus } from "@/lib/checkout.functions";
 import { sendMetaEvent } from "@/lib/meta-capi.functions";
-import { fbqTrack, hasTrackedPurchase, markTrackedPurchase, purchaseEventId } from "@/lib/meta-pixel";
+import { fbqTrack, getMetaBrowserIds, hasTrackedPurchase, markTrackedPurchase, purchaseEventId } from "@/lib/meta-pixel";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Copy, Loader2, Clock, XCircle } from "lucide-react";
 
@@ -55,6 +55,7 @@ function OrderPage() {
     }
     // Also send CAPI from the browser (improves EMQ with user_agent + URL).
     // Webhook fires CAPI too; Meta dedups by event_id + event_name.
+    const browserIds = getMetaBrowserIds();
     void fireMetaEvent({
       data: {
         event_name: "Purchase",
@@ -62,6 +63,7 @@ function OrderPage() {
         transaction_id: transactionId,
         event_source_url: typeof window !== "undefined" ? window.location.href : undefined,
         user_agent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
+        ...browserIds,
       },
     }).catch((e) => console.error("Meta CAPI failed", e));
     setPurchaseFired(true);
