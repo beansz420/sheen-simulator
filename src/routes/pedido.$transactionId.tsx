@@ -41,7 +41,7 @@ function OrderPage() {
     // deduplicates the browser Pixel + server CAPI events.
     const eventId = purchaseEventId(transactionId);
     if (!hasTrackedPurchase(transactionId)) {
-      fbqTrack(
+      const didTrack = fbqTrack(
         "Purchase",
         {
           currency: "BRL",
@@ -51,7 +51,7 @@ function OrderPage() {
         },
         eventId,
       );
-      markTrackedPurchase(transactionId);
+      if (didTrack) markTrackedPurchase(transactionId);
     }
     // Also send CAPI from the browser (improves EMQ with user_agent + URL).
     // Webhook fires CAPI too; Meta dedups by event_id + event_name.
