@@ -90,8 +90,8 @@ export const Route = createFileRoute("/api/public/pagap-webhook")({
         }
 
         // Dispara Meta Purchase via CAPI. event_id determinístico
-        // (purchase_<txId>) deduplica com o Pixel do browser.
-        if (status === "paid" && current?.status !== "paid") {
+        // (purchase_<txId>) deduplica reenvios do webhook e o Pixel do browser.
+        if (status === "paid") {
           await sendMetaCapiEvent({
             event_name: "Purchase",
             event_id: purchaseEventId(txId),
