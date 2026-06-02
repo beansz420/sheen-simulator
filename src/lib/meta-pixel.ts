@@ -43,10 +43,11 @@ export function fbqTrack(
   params?: Record<string, unknown>,
   eventID?: string,
 ) {
-  if (typeof window === "undefined" || !window.fbq) return;
+  if (typeof window === "undefined" || !window.fbq) return false;
   if (eventID) {
     window.fbq("track", event, params ?? {}, { eventID });
   } else {
     window.fbq("track", event, params ?? {});
   }
+  return true;
 }
