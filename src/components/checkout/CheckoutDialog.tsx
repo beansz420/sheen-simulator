@@ -645,7 +645,7 @@ function PixStep({ transactionId, onClose }: { transactionId: string; onClose: (
     if (!data?.ok || data.order.status !== "paid") return;
     const eventId = purchaseEventId(transactionId);
     if (!hasTrackedPurchase(transactionId)) {
-      fbqTrack(
+      const didTrack = fbqTrack(
         "Purchase",
         {
           currency: "BRL",
@@ -655,7 +655,7 @@ function PixStep({ transactionId, onClose }: { transactionId: string; onClose: (
         },
         eventId,
       );
-      markTrackedPurchase(transactionId);
+      if (didTrack) markTrackedPurchase(transactionId);
     }
     void fireMetaEvent({
       data: {
