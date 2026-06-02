@@ -28,7 +28,7 @@ import { maskCPF, maskCEP, maskPhone, isValidCPF, lookupCepViaCep } from "@/lib/
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { createPixOrder, getOrderStatus } from "@/lib/checkout.functions";
 import { sendMetaEvent } from "@/lib/meta-capi.functions";
-import { fbqTrack, hasTrackedPurchase, markTrackedPurchase, purchaseEventId } from "@/lib/meta-pixel";
+import { fbqTrack, getMetaBrowserIds, hasTrackedPurchase, markTrackedPurchase, purchaseEventId } from "@/lib/meta-pixel";
 import { getTracking } from "@/lib/tracking";
 
 import { KITS, type KitId } from "@/lib/kits";
@@ -657,6 +657,7 @@ function PixStep({ transactionId, onClose }: { transactionId: string; onClose: (
       );
       if (didTrack) markTrackedPurchase(transactionId);
     }
+    const browserIds = getMetaBrowserIds();
     void fireMetaEvent({
       data: {
         event_name: "Purchase",
@@ -664,6 +665,7 @@ function PixStep({ transactionId, onClose }: { transactionId: string; onClose: (
         transaction_id: transactionId,
         event_source_url: typeof window !== "undefined" ? window.location.href : undefined,
         user_agent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
+        ...browserIds,
       },
     }).catch((e) => console.error("Meta CAPI failed", e));
     setPurchaseFired(true);
