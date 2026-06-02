@@ -69,13 +69,6 @@ export const Route = createFileRoute("/api/public/pagap-webhook")({
           return new Response("ignored", { status: 200 });
         }
 
-        // Lê status atual para disparar Purchase apenas na transição para paid
-        const { data: current } = await supabaseAdmin
-          .from("orders")
-          .select("status")
-          .eq("transaction_id", txId)
-          .maybeSingle();
-
         const update: { status: string; paid_at?: string } = { status };
         if (status === "paid") update.paid_at = payload.data?.paid_at || new Date().toISOString();
 
@@ -90,12 +83,13 @@ export const Route = createFileRoute("/api/public/pagap-webhook")({
         }
 
         // Dispara Meta Purchase via CAPI. event_id determinístico
-        // (purchase_<txId>) deduplica com o Pixel do browser.
-        if (status === "paid" && current?.status !== "paid") {
+        // (purchase_<txId>) deduplica reenvios do webhook e o Pixel do browser.
+        if (status === "paid") {
           await sendMetaCapiEvent({
             event_name: "Purchase",
             event_id: purchaseEventId(txId),
             transaction_id: txId,
+            event_source_url: `https://clareador.com/pedido/${txId}`,
           }).catch((e) => console.error("[meta-capi] webhook purchase failed", e));
         }
 

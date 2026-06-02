@@ -17,6 +17,8 @@ export async function sendMetaCapiEvent(opts: {
   transaction_id: string;
   event_source_url?: string;
   user_agent?: string;
+  fbp?: string;
+  fbc?: string;
 }) {
   const token = process.env.META_CAPI_ACCESS_TOKEN;
   if (!token) {
@@ -64,6 +66,8 @@ export async function sendMetaCapiEvent(opts: {
         user_data: {
           ...userData,
           client_user_agent: opts.user_agent,
+          fbp: opts.fbp,
+          fbc: opts.fbc,
         },
         custom_data: {
           currency: "BRL",

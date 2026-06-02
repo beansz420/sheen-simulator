@@ -8,6 +8,8 @@ const Schema = z.object({
   transaction_id: z.string().min(1).max(100),
   event_source_url: z.string().url().max(500).optional(),
   user_agent: z.string().max(500).optional(),
+  fbp: z.string().max(255).optional(),
+  fbc: z.string().max(255).optional(),
 });
 
 export const sendMetaEvent = createServerFn({ method: "POST" })

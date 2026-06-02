@@ -27,6 +27,8 @@ import {
 import { maskCPF, maskCEP, maskPhone, isValidCPF, lookupCepViaCep } from "@/lib/br-validators";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { createPixOrder, getOrderStatus } from "@/lib/checkout.functions";
+import { sendMetaEvent } from "@/lib/meta-capi.functions";
+import { fbqTrack, getMetaBrowserIds, hasTrackedPurchase, markTrackedPurchase, purchaseEventId } from "@/lib/meta-pixel";
 import { getTracking } from "@/lib/tracking";
 
 import { KITS, type KitId } from "@/lib/kits";
@@ -622,7 +624,9 @@ function PixIcon() {
 
 function PixStep({ transactionId, onClose }: { transactionId: string; onClose: () => void }) {
   const fetchStatus = useServerFn(getOrderStatus);
+  const fireMetaEvent = useServerFn(sendMetaEvent);
   const [copied, setCopied] = useState(false);
+  const [purchaseFired, setPurchaseFired] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["order", transactionId],
@@ -636,8 +640,36 @@ function PixStep({ transactionId, onClose }: { transactionId: string; onClose: (
     },
   });
 
-  // O evento Purchase (Pixel + CAPI) é disparado na rota /pedido/$transactionId
-  // para evitar duplicação. Ver src/routes/pedido.$transactionId.tsx.
+  useEffect(() => {
+    if (purchaseFired) return;
+    if (!data?.ok || data.order.status !== "paid") return;
+    const eventId = purchaseEventId(transactionId);
+    if (!hasTrackedPurchase(transactionId)) {
+      const didTrack = fbqTrack(
+        "Purchase",
+        {
+          currency: "BRL",
+          value: Number(data.order.amount),
+          content_ids: [transactionId],
+          content_type: "product",
+        },
+        eventId,
+      );
+      if (didTrack) markTrackedPurchase(transactionId);
+    }
+    const browserIds = getMetaBrowserIds();
+    void fireMetaEvent({
+      data: {
+        event_name: "Purchase",
+        event_id: eventId,
+        transaction_id: transactionId,
+        event_source_url: typeof window !== "undefined" ? window.location.href : undefined,
+        user_agent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
+        ...browserIds,
+      },
+    }).catch((e) => console.error("Meta CAPI failed", e));
+    setPurchaseFired(true);
+  }, [data, fireMetaEvent, purchaseFired, transactionId]);
 
   if (isLoading || !data) {
     return (
