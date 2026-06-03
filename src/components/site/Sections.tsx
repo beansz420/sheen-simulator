@@ -5,6 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { KitsSection } from "@/components/site/KitsSection";
 import reviewForehead from "@/assets/review-forehead.webp";
 import reviewArmpit from "@/assets/review-armpit.webp";
 import reviewKit from "@/assets/review-kit.webp";
