@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Star, ShoppingCart, Truck, Eye, Volume2, ThumbsUp, Users, ShieldCheck, Award } from "lucide-react";
+import { Star, ShoppingCart, Truck, Eye, Users, ShieldCheck, Award } from "lucide-react";
 import { fbqTrack } from "@/lib/meta-pixel";
 
 export function ProductBuyBox() {
@@ -15,8 +15,8 @@ export function ProductBuyBox() {
   }, []);
 
   return (
-    <div className="space-y-5">
-      {/* Live viewers + sound */}
+    <div className="space-y-4">
+      {/* Live viewers */}
       <div className="flex items-center justify-between text-xs">
         <span className="flex items-center gap-2 text-muted-foreground">
           <span className="relative flex h-2.5 w-2.5">
@@ -25,23 +25,14 @@ export function ProductBuyBox() {
           </span>
           <Eye className="h-3.5 w-3.5" /> 187 vendo agora
         </span>
-        <button className="flex items-center gap-1 rounded-full border bg-background px-3 py-1 text-muted-foreground">
-          <Volume2 className="h-3.5 w-3.5" /> Toque para ouvir
-        </button>
       </div>
 
-      {/* Low stock alert */}
-      <div className="rounded-xl border border-promo/40 bg-promo/10 px-4 py-3 text-sm">
-        <p className="flex items-center gap-2 font-medium">
-          <ThumbsUp className="h-4 w-4 text-promo" />
-          Restam apenas <span className="font-bold">14 unidades</span> em estoque!
-        </p>
-      </div>
+      {/* Title */}
+      <h1 className="text-2xl font-extrabold leading-tight tracking-tight md:text-4xl">
+        Clareador Dérmico Cicatribem
+      </h1>
 
-      <span className="inline-block rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-primary">
-        60g · Uso facial e corporal
-      </span>
-
+      {/* Ratings */}
       <div className="flex items-center gap-2">
         {[...Array(5)].map((_, i) => (
           <Star key={i} className="h-4 w-4 fill-promo text-promo" />
@@ -50,29 +41,24 @@ export function ProductBuyBox() {
         <span className="text-sm text-muted-foreground">(2.847 avaliações)</span>
       </div>
 
-      <h1 className="text-3xl font-extrabold leading-tight tracking-tight md:text-4xl">
-        Clareador Dérmico Cicatribem
-      </h1>
-
       {/* Hero price */}
       <div className="rounded-2xl border bg-card p-4 shadow-sm">
         <div className="flex flex-wrap items-center gap-3">
           <span className="text-3xl font-extrabold text-foreground">R$ 49,90</span>
           <span className="text-sm font-medium text-muted-foreground line-through">R$ 89,90</span>
           <span className="rounded-md bg-destructive px-2 py-0.5 text-xs font-bold text-destructive-foreground">-44%</span>
-          <span className="ml-auto rounded-full bg-success px-3 py-1 text-[11px] font-bold uppercase text-success-foreground">
-            Economize 44%
-          </span>
         </div>
-        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-          <span>💎 Menor preço do ano</span>
-          <span>🔥 Últimas unidades!</span>
-        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Cicatribem · Niacinamida + Ácido Glicólico + Lumin White
+        </p>
       </div>
 
-      <p className="text-sm text-muted-foreground">
-        Cicatribem · Niacinamida + Ácido Glicólico + Lumin White
-      </p>
+      {/* Low stock alert */}
+      <div className="rounded-xl border border-promo/40 bg-promo/10 px-4 py-2.5 text-sm">
+        <p className="font-medium">
+          Restam apenas <span className="font-bold">14 unidades</span> em estoque!
+        </p>
+      </div>
 
       <div className="flex items-center gap-2 rounded-xl bg-secondary px-4 py-3 text-sm">
         <Users className="h-4 w-4 text-primary" />
@@ -88,9 +74,6 @@ export function ProductBuyBox() {
         <ShoppingCart className="h-5 w-5" /> Quero o meu agora
       </button>
       <p className="text-center text-xs text-muted-foreground">Frete Grátis + Bônus Exclusivos</p>
-      <p className="text-center text-xs text-muted-foreground">
-        <span className="font-bold text-foreground">7 pessoas</span> estão finalizando a compra agora
-      </p>
 
       {/* Trust badges */}
       <div className="grid grid-cols-3 gap-2 pt-1">

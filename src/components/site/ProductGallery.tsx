@@ -58,21 +58,7 @@ export function ProductGallery() {
         </div>
       </div>
 
-      <div className="grid grid-cols-6 gap-2">
-        {slides.map((s, idx) => (
-          <button
-            key={idx}
-            type="button"
-            onClick={() => setI(idx)}
-            aria-label={`Ir para imagem ${idx + 1}`}
-            className={`overflow-hidden rounded-lg ring-2 transition ${
-              idx === i ? "ring-primary" : "ring-transparent hover:ring-border"
-            }`}
-          >
-            <img src={s.src} alt="" className="aspect-square w-full object-cover" loading="lazy" />
-          </button>
-        ))}
-      </div>
     </div>
   );
 }
+
