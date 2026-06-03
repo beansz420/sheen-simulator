@@ -5,6 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { KitsSection } from "@/components/site/KitsSection";
 import reviewForehead from "@/assets/review-forehead.webp";
 import reviewArmpit from "@/assets/review-armpit.webp";
 import reviewKit from "@/assets/review-kit.webp";
@@ -164,8 +165,12 @@ export function Sections() {
         </div>
       </section>
 
+      {/* Kits — acima das provas sociais para aumentar conversão */}
+      <KitsSection />
+
       {/* Reviews */}
       <section className="mx-auto max-w-6xl px-4">
+
         <div className="mb-10 text-center">
           <h2 className="text-3xl font-extrabold md:text-4xl">O que dizem nossas clientes</h2>
           <div className="mt-3 flex items-center justify-center gap-2">
