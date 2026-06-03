@@ -10,7 +10,7 @@ export function ProductBuyBox() {
       content_name: "Clareador Dérmico Cicatribem",
       content_type: "product",
       currency: "BRL",
-      value: 49.9,
+      value: 59.9,
     });
   }, []);
 
@@ -44,9 +44,9 @@ export function ProductBuyBox() {
       {/* Hero price */}
       <div className="rounded-2xl border bg-card p-4 shadow-sm">
         <div className="flex flex-wrap items-center gap-3">
-          <span className="text-3xl font-extrabold text-foreground">R$ 49,90</span>
-          <span className="text-sm font-medium text-muted-foreground line-through">R$ 89,90</span>
-          <span className="rounded-md bg-destructive px-2 py-0.5 text-xs font-bold text-destructive-foreground">-44%</span>
+          <span className="text-3xl font-extrabold text-foreground">R$ 59,90</span>
+          <span className="text-sm font-medium text-muted-foreground line-through">R$ 99,90</span>
+          <span className="rounded-md bg-destructive px-2 py-0.5 text-xs font-bold text-destructive-foreground">-40%</span>
         </div>
         <p className="mt-2 text-xs text-muted-foreground">
           Cicatribem · Niacinamida + Ácido Glicólico + Lumin White
