@@ -24,14 +24,19 @@ export type Database = {
           address_state: string
           address_street: string
           amount: number
+          client_ip_address: string | null
+          client_user_agent: string | null
           created_at: string
           customer_document: string
           customer_email: string
           customer_name: string
           customer_phone: string
           expires_at: string | null
+          fbc: string | null
+          fbp: string | null
           id: string
           items: Json
+          kit_id: string | null
           paid_at: string | null
           pix_copy_paste: string | null
           pix_qrcode: string | null
@@ -49,14 +54,19 @@ export type Database = {
           address_state: string
           address_street: string
           amount: number
+          client_ip_address?: string | null
+          client_user_agent?: string | null
           created_at?: string
           customer_document: string
           customer_email: string
           customer_name: string
           customer_phone: string
           expires_at?: string | null
+          fbc?: string | null
+          fbp?: string | null
           id?: string
           items?: Json
+          kit_id?: string | null
           paid_at?: string | null
           pix_copy_paste?: string | null
           pix_qrcode?: string | null
@@ -74,14 +84,19 @@ export type Database = {
           address_state?: string
           address_street?: string
           amount?: number
+          client_ip_address?: string | null
+          client_user_agent?: string | null
           created_at?: string
           customer_document?: string
           customer_email?: string
           customer_name?: string
           customer_phone?: string
           expires_at?: string | null
+          fbc?: string | null
+          fbp?: string | null
           id?: string
           items?: Json
+          kit_id?: string | null
           paid_at?: string | null
           pix_copy_paste?: string | null
           pix_qrcode?: string | null

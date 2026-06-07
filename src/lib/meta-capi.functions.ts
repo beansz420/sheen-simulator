@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { sendMetaCapiEvent } from "./meta-capi.server";
 
@@ -15,5 +16,8 @@ const Schema = z.object({
 export const sendMetaEvent = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => Schema.parse(input))
   .handler(async ({ data }) => {
-    return sendMetaCapiEvent(data);
+    // Captura IP/UA da requisição se o cliente não enviou.
+    const ua = data.user_agent || getRequestHeader("user-agent") || undefined;
+    const ip = getRequestIP({ xForwardedFor: true }) || undefined;
+    return sendMetaCapiEvent({ ...data, user_agent: ua, client_ip_address: ip });
   });

@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { KITS, type KitId } from "./kits";
@@ -32,6 +33,8 @@ const CheckoutSchema = z.object({
   address_city: z.string().trim().min(2).max(120),
   address_state: z.string().trim().length(2),
   tracking_parameters: TrackingSchema,
+  fbp: z.string().max(255).optional(),
+  fbc: z.string().max(500).optional(),
 });
 
 
@@ -58,12 +61,17 @@ export const createPixOrder = createServerFn({ method: "POST" })
       return { ok: false as const, error: "Pagamento indisponível no momento." };
     }
 
+    // Captura IP/UA da requisição p/ enriquecer Meta CAPI depois
+    const clientUA = getRequestHeader("user-agent") || null;
+    const clientIP = getRequestIP({ xForwardedFor: true }) || null;
+
     // 1. Cria registro pendente
     const { data: order, error: insertErr } = await supabaseAdmin
       .from("orders")
       .insert({
         status: "pending",
         amount,
+        kit_id: data.kitId,
         customer_name: data.customer_name,
         customer_email: data.customer_email,
         customer_phone: data.customer_phone,
@@ -76,6 +84,10 @@ export const createPixOrder = createServerFn({ method: "POST" })
         address_city: data.address_city,
         address_state: data.address_state.toUpperCase(),
         items: [{ id: kit.id, name: kit.name, quantity: kit.quantity, price: kit.price }],
+        fbp: data.fbp || null,
+        fbc: data.fbc || null,
+        client_user_agent: clientUA,
+        client_ip_address: clientIP,
       })
       .select()
       .single();

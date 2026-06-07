@@ -283,7 +283,10 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
     setLoading(true);
     try {
       const tracking = getTracking();
-      const res = await createOrder({ data: { kitId, ...form, tracking_parameters: tracking } });
+      const { fbp, fbc } = getMetaBrowserIds();
+      const res = await createOrder({
+        data: { kitId, ...form, tracking_parameters: tracking, fbp, fbc },
+      });
 
       if (!res.ok) {
         setError(res.error);
@@ -644,14 +647,23 @@ function PixStep({ transactionId, onClose }: { transactionId: string; onClose: (
     if (purchaseFired) return;
     if (!data?.ok || data.order.status !== "paid") return;
     const eventId = purchaseEventId(transactionId);
+    // Reconstrói o kit a partir do amount p/ enriquecer o Pixel
+    const amount = Number(data.order.amount);
+    const matchedKit = (Object.values(KITS) as Array<typeof KITS["1"]>).find((k) => k.price === amount);
     if (!hasTrackedPurchase(transactionId)) {
       const didTrack = fbqTrack(
         "Purchase",
         {
           currency: "BRL",
-          value: Number(data.order.amount),
-          content_ids: [transactionId],
+          value: amount,
           content_type: "product",
+          content_ids: matchedKit ? [matchedKit.id] : [transactionId],
+          content_name: matchedKit?.name,
+          num_items: matchedKit?.quantity,
+          order_id: transactionId,
+          contents: matchedKit
+            ? [{ id: matchedKit.id, quantity: matchedKit.quantity, item_price: matchedKit.price }]
+            : undefined,
         },
         eventId,
       );
