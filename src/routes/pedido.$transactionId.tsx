@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { getOrderStatus } from "@/lib/checkout.functions";
 import { sendMetaEvent } from "@/lib/meta-capi.functions";
 import { fbqTrack, getMetaBrowserIds, hasTrackedPurchase, markTrackedPurchase, purchaseEventId } from "@/lib/meta-pixel";
+import { KITS } from "@/lib/kits";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Copy, Loader2, Clock, XCircle } from "lucide-react";
 
@@ -40,14 +41,22 @@ function OrderPage() {
     // Deterministic event_id matches the webhook's CAPI call so Meta
     // deduplicates the browser Pixel + server CAPI events.
     const eventId = purchaseEventId(transactionId);
+    const amount = Number(data.order.amount);
+    const matchedKit = (Object.values(KITS) as Array<typeof KITS["1"]>).find((k) => k.price === amount);
     if (!hasTrackedPurchase(transactionId)) {
       const didTrack = fbqTrack(
         "Purchase",
         {
           currency: "BRL",
-          value: Number(data.order.amount),
-          content_ids: [transactionId],
+          value: amount,
           content_type: "product",
+          content_ids: matchedKit ? [matchedKit.id] : [transactionId],
+          content_name: matchedKit?.name,
+          num_items: matchedKit?.quantity,
+          order_id: transactionId,
+          contents: matchedKit
+            ? [{ id: matchedKit.id, quantity: matchedKit.quantity, item_price: matchedKit.price }]
+            : undefined,
         },
         eventId,
       );
