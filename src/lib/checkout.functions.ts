@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { KITS, type KitId } from "./kits";
@@ -32,6 +33,8 @@ const CheckoutSchema = z.object({
   address_city: z.string().trim().min(2).max(120),
   address_state: z.string().trim().length(2),
   tracking_parameters: TrackingSchema,
+  fbp: z.string().max(255).optional(),
+  fbc: z.string().max(500).optional(),
 });
 
 
