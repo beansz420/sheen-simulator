@@ -1,5 +1,6 @@
 import { createHash } from "crypto";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { KITS, type KitId } from "./kits";
 
 const PIXEL_ID = "3903982886564566";
 const API_VERSION = "v19.0";
@@ -17,6 +18,7 @@ export async function sendMetaCapiEvent(opts: {
   transaction_id: string;
   event_source_url?: string;
   user_agent?: string;
+  client_ip_address?: string;
   fbp?: string;
   fbc?: string;
 }) {
@@ -29,7 +31,7 @@ export async function sendMetaCapiEvent(opts: {
   const { data: order } = await supabaseAdmin
     .from("orders")
     .select(
-      "amount, customer_email, customer_phone, customer_name, customer_document, address_city, address_state, address_cep",
+      "amount, kit_id, customer_email, customer_phone, customer_name, customer_document, address_city, address_state, address_cep, fbp, fbc, client_user_agent, client_ip_address",
     )
     .eq("transaction_id", opts.transaction_id)
     .maybeSingle();
@@ -42,18 +44,45 @@ export async function sendMetaCapiEvent(opts: {
   const [firstName, ...rest] = (order.customer_name || "").split(" ");
   const lastName = rest.join(" ");
   const phone = (order.customer_phone || "").replace(/\D/g, "");
+  // Telefone Brasil: prepend country code se ainda não tem.
+  const phoneE164 = phone.length === 10 || phone.length === 11 ? `55${phone}` : phone;
 
   const userData: Record<string, string | undefined> = {
     em: sha256(order.customer_email),
-    ph: sha256(phone),
+    ph: sha256(phoneE164),
     fn: sha256(firstName),
     ln: sha256(lastName),
-    ct: sha256(order.address_city),
-    st: sha256(order.address_state),
+    ct: sha256(order.address_city?.replace(/\s+/g, "")),
+    st: sha256(order.address_state?.toLowerCase()),
     zp: sha256((order.address_cep || "").replace(/\D/g, "")),
     country: sha256("br"),
     external_id: sha256(order.customer_document?.replace(/\D/g, "")),
   };
+
+  // user_data extra (não-hash): IP, UA, fbp, fbc — fundamentais p/ EMQ alto
+  const clientUA = opts.user_agent || order.client_user_agent || undefined;
+  const clientIP = opts.client_ip_address || order.client_ip_address || undefined;
+  const fbp = opts.fbp || order.fbp || undefined;
+  const fbc = opts.fbc || order.fbc || undefined;
+
+  // custom_data rico: Meta usa content_ids, content_name, num_items p/ otimização
+  const kit = order.kit_id ? KITS[order.kit_id as KitId] : null;
+  const customData: Record<string, unknown> = {
+    currency: "BRL",
+    value: Number(order.amount),
+    content_type: "product",
+    order_id: opts.transaction_id,
+  };
+  if (kit) {
+    customData.content_ids = [kit.id];
+    customData.content_name = kit.name;
+    customData.num_items = kit.quantity;
+    customData.contents = [
+      { id: kit.id, quantity: kit.quantity, item_price: kit.price },
+    ];
+  } else {
+    customData.content_ids = [opts.transaction_id];
+  }
 
   const payload = {
     data: [
@@ -65,14 +94,12 @@ export async function sendMetaCapiEvent(opts: {
         event_source_url: opts.event_source_url,
         user_data: {
           ...userData,
-          client_user_agent: opts.user_agent,
-          fbp: opts.fbp,
-          fbc: opts.fbc,
+          client_user_agent: clientUA,
+          client_ip_address: clientIP,
+          fbp,
+          fbc,
         },
-        custom_data: {
-          currency: "BRL",
-          value: Number(order.amount),
-        },
+        custom_data: customData,
       },
     ],
   };
