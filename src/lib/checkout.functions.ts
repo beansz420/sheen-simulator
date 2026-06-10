@@ -109,20 +109,17 @@ export const createPixOrder = createServerFn({ method: "POST" })
         },
         body: JSON.stringify({
           amount,
-          customer: {
-            name: data.customer_name,
-            email: data.customer_email,
-            document: data.customer_document.replace(/\D/g, ""),
-            phone: data.customer_phone.replace(/\D/g, ""),
-          },
+          customer_name: data.customer_name,
+          customer_email: data.customer_email,
+          customer_document: data.customer_document.replace(/\D/g, ""),
+          customer_phone: data.customer_phone.replace(/\D/g, ""),
           items: [
             {
-              title: kit.name,
+              name: kit.name,
               quantity: kit.quantity,
-              unit_price: Number((amount / kit.quantity).toFixed(2)),
+              price: Number((amount / kit.quantity).toFixed(2)),
             },
           ],
-          external_id: order.id,
           ...(data.tracking_parameters && Object.keys(data.tracking_parameters).length > 0
             ? { tracking_parameters: data.tracking_parameters }
             : {}),
