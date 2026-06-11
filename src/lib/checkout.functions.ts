@@ -119,12 +119,21 @@ export const createPixOrder = createServerFn({ method: "POST" })
 
       const readPixAmount = (pix?: string | null) => {
         if (!pix) return null;
-        const amountTagIndex = pix.indexOf("54");
-        if (amountTagIndex < 0) return null;
-        const length = Number(pix.slice(amountTagIndex + 2, amountTagIndex + 4));
-        const value = pix.slice(amountTagIndex + 4, amountTagIndex + 4 + length);
-        const parsed = Number(value);
-        return Number.isFinite(parsed) ? Number(parsed.toFixed(2)) : null;
+        let index = 0;
+        while (index + 4 <= pix.length) {
+          const tag = pix.slice(index, index + 2);
+          const length = Number(pix.slice(index + 2, index + 4));
+          if (!Number.isFinite(length) || length < 0) return null;
+          const valueStart = index + 4;
+          const value = pix.slice(valueStart, valueStart + length);
+          if (value.length !== length) return null;
+          if (tag === "54") {
+            const parsed = Number(value);
+            return Number.isFinite(parsed) ? Number(parsed.toFixed(2)) : null;
+          }
+          index = valueStart + length;
+        }
+        return null;
       };
 
       const controller = new AbortController();
