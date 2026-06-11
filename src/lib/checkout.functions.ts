@@ -99,6 +99,34 @@ export const createPixOrder = createServerFn({ method: "POST" })
 
     // 2. Cria Pix na Pagap
     try {
+      const pagapPayload = {
+        amount,
+        customer_name: data.customer_name,
+        customer_email: data.customer_email,
+        customer_document: data.customer_document.replace(/\D/g, ""),
+        customer_phone: data.customer_phone.replace(/\D/g, ""),
+        items: [
+          {
+            name: kit.name,
+            quantity: 1,
+            price: amount,
+          },
+        ],
+        ...(data.tracking_parameters && Object.keys(data.tracking_parameters).length > 0
+          ? { tracking_parameters: data.tracking_parameters }
+          : {}),
+      };
+
+      const readPixAmount = (pix?: string | null) => {
+        if (!pix) return null;
+        const amountTagIndex = pix.indexOf("54");
+        if (amountTagIndex < 0) return null;
+        const length = Number(pix.slice(amountTagIndex + 2, amountTagIndex + 4));
+        const value = pix.slice(amountTagIndex + 4, amountTagIndex + 4 + length);
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? Number(parsed.toFixed(2)) : null;
+      };
+
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 20000);
       const res = await fetch("https://api.pagap.com.br/functions/v1/create-pix-payment", {
@@ -107,34 +135,6 @@ export const createPixOrder = createServerFn({ method: "POST" })
           "Content-Type": "application/json",
           "x-api-key": apiKey,
         },
-        const pagapPayload = {
-          amount,
-          customer_name: data.customer_name,
-          customer_email: data.customer_email,
-          customer_document: data.customer_document.replace(/\D/g, ""),
-          customer_phone: data.customer_phone.replace(/\D/g, ""),
-          items: [
-            {
-              name: kit.name,
-              quantity: 1,
-              price: amount,
-            },
-          ],
-          ...(data.tracking_parameters && Object.keys(data.tracking_parameters).length > 0
-            ? { tracking_parameters: data.tracking_parameters }
-            : {}),
-        };
-
-        const readPixAmount = (pix?: string | null) => {
-          if (!pix) return null;
-          const amountTagIndex = pix.indexOf("54");
-          if (amountTagIndex < 0) return null;
-          const length = Number(pix.slice(amountTagIndex + 2, amountTagIndex + 4));
-          const value = pix.slice(amountTagIndex + 4, amountTagIndex + 4 + length);
-          const parsed = Number(value);
-          return Number.isFinite(parsed) ? Number(parsed.toFixed(2)) : null;
-        };
-
         body: JSON.stringify(pagapPayload),
 
         signal: controller.signal,
