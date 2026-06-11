@@ -25,10 +25,11 @@ import {
   Tag,
 } from "lucide-react";
 import { maskCPF, maskCEP, maskPhone, isValidCPF, lookupCepViaCep } from "@/lib/br-validators";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { createPixOrder, getOrderStatus } from "@/lib/checkout.functions";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { createPixOrder } from "@/lib/checkout.functions";
 import { sendMetaEvent } from "@/lib/meta-capi.functions";
 import { fbqTrack, getMetaBrowserIds, hasTrackedPurchase, markTrackedPurchase, purchaseEventId } from "@/lib/meta-pixel";
+import { fetchOrderStatus } from "@/lib/order-status";
 import { getTracking } from "@/lib/tracking";
 
 import { KITS, type KitId } from "@/lib/kits";
@@ -66,6 +67,7 @@ export function CheckoutDialog({
         className="left-0 top-0 flex h-[100dvh] w-screen max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-hidden rounded-none border-0 p-0 sm:left-1/2 sm:top-1/2 sm:h-auto sm:max-h-[92vh] sm:w-full sm:max-w-2xl sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:border"
       >
         <DialogTitle className="sr-only">Checkout</DialogTitle>
+          <DialogDescription className="sr-only">Finalize seu pedido e pague com Pix.</DialogDescription>
         {kitId && (
           <div className="flex-1 overflow-y-auto overscroll-contain">
             <CheckoutBody kitId={kitId} onClose={() => onOpenChange(false)} />
@@ -626,14 +628,13 @@ function PixIcon() {
 }
 
 function PixStep({ transactionId, onClose }: { transactionId: string; onClose: () => void }) {
-  const fetchStatus = useServerFn(getOrderStatus);
   const fireMetaEvent = useServerFn(sendMetaEvent);
   const [copied, setCopied] = useState(false);
   const [purchaseFired, setPurchaseFired] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["order", transactionId],
-    queryFn: () => fetchStatus({ data: { transaction_id: transactionId } }),
+    queryFn: () => fetchOrderStatus(transactionId),
     refetchInterval: (q) => {
       const r = q.state.data;
       if (r?.ok && (r.order.status === "paid" || r.order.status === "expired" || r.order.status === "refunded")) {
