@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PedidoTransactionIdRouteImport } from './routes/pedido.$transactionId'
+import { Route as ApiOrderStatusRouteImport } from './routes/api/order-status'
 import { Route as ApiPublicPagapWebhookRouteImport } from './routes/api/public/pagap-webhook'
 
 const CheckoutRoute = CheckoutRouteImport.update({
@@ -29,6 +30,11 @@ const PedidoTransactionIdRoute = PedidoTransactionIdRouteImport.update({
   path: '/pedido/$transactionId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOrderStatusRoute = ApiOrderStatusRouteImport.update({
+  id: '/api/order-status',
+  path: '/api/order-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPagapWebhookRoute = ApiPublicPagapWebhookRouteImport.update({
   id: '/api/public/pagap-webhook',
   path: '/api/public/pagap-webhook',
@@ -38,12 +44,14 @@ const ApiPublicPagapWebhookRoute = ApiPublicPagapWebhookRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
+  '/api/order-status': typeof ApiOrderStatusRoute
   '/pedido/$transactionId': typeof PedidoTransactionIdRoute
   '/api/public/pagap-webhook': typeof ApiPublicPagapWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
+  '/api/order-status': typeof ApiOrderStatusRoute
   '/pedido/$transactionId': typeof PedidoTransactionIdRoute
   '/api/public/pagap-webhook': typeof ApiPublicPagapWebhookRoute
 }
@@ -51,6 +59,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
+  '/api/order-status': typeof ApiOrderStatusRoute
   '/pedido/$transactionId': typeof PedidoTransactionIdRoute
   '/api/public/pagap-webhook': typeof ApiPublicPagapWebhookRoute
 }
@@ -59,14 +68,21 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/checkout'
+    | '/api/order-status'
     | '/pedido/$transactionId'
     | '/api/public/pagap-webhook'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/checkout' | '/pedido/$transactionId' | '/api/public/pagap-webhook'
+  to:
+    | '/'
+    | '/checkout'
+    | '/api/order-status'
+    | '/pedido/$transactionId'
+    | '/api/public/pagap-webhook'
   id:
     | '__root__'
     | '/'
     | '/checkout'
+    | '/api/order-status'
     | '/pedido/$transactionId'
     | '/api/public/pagap-webhook'
   fileRoutesById: FileRoutesById
@@ -74,6 +90,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CheckoutRoute: typeof CheckoutRoute
+  ApiOrderStatusRoute: typeof ApiOrderStatusRoute
   PedidoTransactionIdRoute: typeof PedidoTransactionIdRoute
   ApiPublicPagapWebhookRoute: typeof ApiPublicPagapWebhookRoute
 }
@@ -101,6 +118,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PedidoTransactionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/order-status': {
+      id: '/api/order-status'
+      path: '/api/order-status'
+      fullPath: '/api/order-status'
+      preLoaderRoute: typeof ApiOrderStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/pagap-webhook': {
       id: '/api/public/pagap-webhook'
       path: '/api/public/pagap-webhook'
@@ -114,9 +138,20 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CheckoutRoute: CheckoutRoute,
+  ApiOrderStatusRoute: ApiOrderStatusRoute,
   PedidoTransactionIdRoute: PedidoTransactionIdRoute,
   ApiPublicPagapWebhookRoute: ApiPublicPagapWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
