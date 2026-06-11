@@ -54,7 +54,7 @@ export const createPixOrder = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => CheckoutSchema.parse(input))
   .handler(async ({ data }) => {
     const kit = KITS[data.kitId as KitId];
-    const amount = kit.price;
+    const amount = Number(kit.price.toFixed(2));
 
     const apiKey = process.env.PAGAP_SECRET_KEY;
     if (!apiKey) {
@@ -107,7 +107,7 @@ export const createPixOrder = createServerFn({ method: "POST" })
           "Content-Type": "application/json",
           "x-api-key": apiKey,
         },
-        body: JSON.stringify({
+        const pagapPayload = {
           amount,
           customer_name: data.customer_name,
           customer_email: data.customer_email,
@@ -116,14 +116,26 @@ export const createPixOrder = createServerFn({ method: "POST" })
           items: [
             {
               name: kit.name,
-              quantity: kit.quantity,
-              price: Number((amount / kit.quantity).toFixed(2)),
+              quantity: 1,
+              price: amount,
             },
           ],
           ...(data.tracking_parameters && Object.keys(data.tracking_parameters).length > 0
             ? { tracking_parameters: data.tracking_parameters }
             : {}),
-        }),
+        };
+
+        const readPixAmount = (pix?: string | null) => {
+          if (!pix) return null;
+          const amountTagIndex = pix.indexOf("54");
+          if (amountTagIndex < 0) return null;
+          const length = Number(pix.slice(amountTagIndex + 2, amountTagIndex + 4));
+          const value = pix.slice(amountTagIndex + 4, amountTagIndex + 4 + length);
+          const parsed = Number(value);
+          return Number.isFinite(parsed) ? Number(parsed.toFixed(2)) : null;
+        };
+
+        body: JSON.stringify(pagapPayload),
 
         signal: controller.signal,
       }).finally(() => clearTimeout(timeout));
@@ -137,6 +149,13 @@ export const createPixOrder = createServerFn({ method: "POST" })
           body.message ||
           "Os gateways de pagamento estão instáveis. Tente novamente em instantes.";
         return { ok: false as const, error: msg };
+      }
+
+      const pixAmount = readPixAmount(body.pix_copy_paste || body.pix_qrcode);
+      if (pixAmount !== null && Math.abs(pixAmount - amount) > 0.01) {
+        console.error("Pagap amount mismatch:", { expected: amount, received: pixAmount, transaction_id: body.transaction_id });
+        await supabaseAdmin.from("orders").update({ status: "failed" }).eq("id", order.id);
+        return { ok: false as const, error: "Erro ao gerar Pix com o valor correto. Tente novamente." };
       }
 
       await supabaseAdmin
