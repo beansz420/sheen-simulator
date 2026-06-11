@@ -16,7 +16,7 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Creme clareador Cicatribem para melasma, axilas, virilha e rosto. Fórmula com Lumin White™, Niacinamida e Ácido Glicólico. Frete grátis." },
     ],
     links: [
-      { rel: "preload", as: "image", href: heroImg, fetchpriority: "high" },
+      { rel: "preload", as: "image", href: heroImg, fetchPriority: "high" },
     ],
   }),
 });
