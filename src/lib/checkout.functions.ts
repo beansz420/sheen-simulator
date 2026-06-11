@@ -1,7 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
 import { z } from "zod";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { KITS, type KitId } from "./kits";
 
 const TrackingSchema = z
@@ -53,6 +52,7 @@ type PagapResponse = {
 export const createPixOrder = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => CheckoutSchema.parse(input))
   .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const kit = KITS[data.kitId as KitId];
     const amount = Number(kit.price.toFixed(2));
 
@@ -189,6 +189,7 @@ export const createPixOrder = createServerFn({ method: "POST" })
 export const getOrderStatus = createServerFn({ method: "GET" })
   .inputValidator((input: unknown) => z.object({ transaction_id: z.string().min(1).max(100) }).parse(input))
   .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: order, error } = await supabaseAdmin
       .from("orders")
       .select(
