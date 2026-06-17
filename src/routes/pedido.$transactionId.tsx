@@ -14,7 +14,6 @@ export const Route = createFileRoute("/pedido/$transactionId")({
 
 function OrderPage() {
   const { transactionId } = Route.useParams();
-  const fireMetaEvent = useServerFn(sendMetaEvent);
   const [copied, setCopied] = useState(false);
   const [purchaseFired, setPurchaseFired] = useState(false);
 
@@ -30,13 +29,13 @@ function OrderPage() {
     },
   });
 
-  // Dispara Purchase (Pixel + CAPI) quando pagamento confirmado
+  // Dispara Purchase no Pixel quando pagamento confirmado.
+  // CAPI (server-side) é disparado pelo webhook da Pagap — não chamamos do browser
+  // para evitar endpoint público que permitiria spam de eventos no Meta.
   useEffect(() => {
     if (purchaseFired) return;
     if (!data?.ok) return;
     if (data.order.status !== "paid") return;
-    // Deterministic event_id matches the webhook's CAPI call so Meta
-    // deduplicates the browser Pixel + server CAPI events.
     const eventId = purchaseEventId(transactionId);
     const amount = Number(data.order.amount);
     const matchedKit = (Object.values(KITS) as Array<typeof KITS["1"]>).find((k) => k.price === amount);
@@ -59,19 +58,8 @@ function OrderPage() {
       );
       if (didTrack) markTrackedPurchase(transactionId);
     }
-    // Also send CAPI from the browser (improves EMQ with user_agent + URL).
-    // Webhook fires CAPI too; Meta dedups by event_id + event_name.
-    const browserIds = getMetaBrowserIds();
-    void fireMetaEvent({
-      data: {
-        event_name: "Purchase",
-        event_id: eventId,
-        transaction_id: transactionId,
-        event_source_url: typeof window !== "undefined" ? window.location.href : undefined,
-        user_agent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
-        ...browserIds,
-      },
-    }).catch((e) => console.error("Meta CAPI failed", e));
+    setPurchaseFired(true);
+  }, [data, transactionId, purchaseFired]);
     setPurchaseFired(true);
   }, [data, transactionId, purchaseFired, fireMetaEvent]);
 
