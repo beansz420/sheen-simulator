@@ -27,7 +27,7 @@ import {
 import { maskCPF, maskCEP, maskPhone, isValidCPF, lookupCepViaCep } from "@/lib/br-validators";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { createPixOrder } from "@/lib/checkout.functions";
-import { sendMetaEvent } from "@/lib/meta-capi.functions";
+
 import { fbqTrack, getMetaBrowserIds, hasTrackedPurchase, markTrackedPurchase, purchaseEventId } from "@/lib/meta-pixel";
 import { fetchOrderStatus } from "@/lib/order-status";
 import { getTracking } from "@/lib/tracking";
@@ -628,7 +628,6 @@ function PixIcon() {
 }
 
 function PixStep({ transactionId, onClose }: { transactionId: string; onClose: () => void }) {
-  const fireMetaEvent = useServerFn(sendMetaEvent);
   const [copied, setCopied] = useState(false);
   const [purchaseFired, setPurchaseFired] = useState(false);
 
@@ -644,11 +643,13 @@ function PixStep({ transactionId, onClose }: { transactionId: string; onClose: (
     },
   });
 
+  // Purchase no Pixel quando pago. CAPI server-side é disparado pelo
+  // webhook da Pagap — não chamamos do browser para evitar endpoint público
+  // que permitiria spam de eventos no Meta.
   useEffect(() => {
     if (purchaseFired) return;
     if (!data?.ok || data.order.status !== "paid") return;
     const eventId = purchaseEventId(transactionId);
-    // Reconstrói o kit a partir do amount p/ enriquecer o Pixel
     const amount = Number(data.order.amount);
     const matchedKit = (Object.values(KITS) as Array<typeof KITS["1"]>).find((k) => k.price === amount);
     if (!hasTrackedPurchase(transactionId)) {
@@ -670,19 +671,8 @@ function PixStep({ transactionId, onClose }: { transactionId: string; onClose: (
       );
       if (didTrack) markTrackedPurchase(transactionId);
     }
-    const browserIds = getMetaBrowserIds();
-    void fireMetaEvent({
-      data: {
-        event_name: "Purchase",
-        event_id: eventId,
-        transaction_id: transactionId,
-        event_source_url: typeof window !== "undefined" ? window.location.href : undefined,
-        user_agent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
-        ...browserIds,
-      },
-    }).catch((e) => console.error("Meta CAPI failed", e));
     setPurchaseFired(true);
-  }, [data, fireMetaEvent, purchaseFired, transactionId]);
+  }, [data, purchaseFired, transactionId]);
 
   if (isLoading || !data) {
     return (
