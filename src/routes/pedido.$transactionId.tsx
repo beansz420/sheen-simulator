@@ -60,8 +60,6 @@ function OrderPage() {
     }
     setPurchaseFired(true);
   }, [data, transactionId, purchaseFired]);
-    setPurchaseFired(true);
-  }, [data, transactionId, purchaseFired, fireMetaEvent]);
 
 
   if (isLoading) {
