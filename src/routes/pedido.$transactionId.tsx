@@ -1,9 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { sendMetaEvent } from "@/lib/meta-capi.functions";
-import { fbqTrack, getMetaBrowserIds, hasTrackedPurchase, markTrackedPurchase, purchaseEventId } from "@/lib/meta-pixel";
+import { fbqTrack, hasTrackedPurchase, markTrackedPurchase, purchaseEventId } from "@/lib/meta-pixel";
 import { fetchOrderStatus } from "@/lib/order-status";
 import { KITS } from "@/lib/kits";
 import { Button } from "@/components/ui/button";
