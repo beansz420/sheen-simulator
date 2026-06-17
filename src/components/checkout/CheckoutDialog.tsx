@@ -27,7 +27,7 @@ import {
 import { maskCPF, maskCEP, maskPhone, isValidCPF, lookupCepViaCep } from "@/lib/br-validators";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { createPixOrder } from "@/lib/checkout.functions";
-import { sendMetaEvent } from "@/lib/meta-capi.functions";
+
 import { fbqTrack, getMetaBrowserIds, hasTrackedPurchase, markTrackedPurchase, purchaseEventId } from "@/lib/meta-pixel";
 import { fetchOrderStatus } from "@/lib/order-status";
 import { getTracking } from "@/lib/tracking";
