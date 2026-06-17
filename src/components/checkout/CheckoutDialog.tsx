@@ -28,7 +28,7 @@ import { maskCPF, maskCEP, maskPhone, isValidCPF, lookupCepViaCep } from "@/lib/
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { createPixOrder } from "@/lib/checkout.functions";
 
-import { fbqTrack, getMetaBrowserIds, hasTrackedPurchase, markTrackedPurchase, purchaseEventId } from "@/lib/meta-pixel";
+import { fbqTrack, getMetaBrowserIds, hasTrackedPurchase, markTrackedPurchase, purchaseEventId, setMetaAdvancedMatching } from "@/lib/meta-pixel";
 import { fetchOrderStatus } from "@/lib/order-status";
 import { getTracking } from "@/lib/tracking";
 
@@ -286,6 +286,7 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
     try {
       const tracking = getTracking();
       const { fbp, fbc } = getMetaBrowserIds();
+      await setMetaAdvancedMatching({ ...form });
       const res = await createOrder({
         data: { kitId, ...form, tracking_parameters: tracking, fbp, fbc },
       });
