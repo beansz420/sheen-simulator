@@ -105,6 +105,13 @@ export const createPixOrder = createServerFn({ method: "POST" })
         customer_email: data.customer_email,
         customer_document: data.customer_document.replace(/\D/g, ""),
         customer_phone: data.customer_phone.replace(/\D/g, ""),
+        customer_postal_code: data.address_cep.replace(/\D/g, ""),
+        customer_address: data.address_street,
+        customer_address_number: data.address_number,
+        customer_neighborhood: data.address_neighborhood,
+        customer_complement: data.address_complement || undefined,
+        customer_city: data.address_city,
+        customer_state: data.address_state.toUpperCase(),
         items: [
           {
             name: kit.name,
