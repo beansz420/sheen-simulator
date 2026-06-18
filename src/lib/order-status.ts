@@ -6,6 +6,7 @@ export type OrderStatusResponse =
         status: string;
         amount: number | string;
         customer_name: string;
+        kit_id: string | null;
         pix_qrcode: string | null;
         pix_qrcode_image: string | null;
         pix_copy_paste: string | null;
