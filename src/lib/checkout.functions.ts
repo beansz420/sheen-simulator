@@ -19,7 +19,7 @@ const TrackingSchema = z
   .optional();
 
 const CheckoutSchema = z.object({
-  kitId: z.enum(["1", "2", "3"]),
+  kitId: z.enum(["1", "2", "3", "4"]),
   customer_name: z.string().trim().min(2).max(120),
   customer_email: z.string().trim().email().max(255),
   customer_phone: z.string().trim().min(10).max(20),
@@ -200,7 +200,7 @@ export const getOrderStatus = createServerFn({ method: "GET" })
     const { data: order, error } = await supabaseAdmin
       .from("orders")
       .select(
-        "transaction_id, status, amount, customer_name, pix_qrcode, pix_qrcode_image, pix_copy_paste, expires_at, paid_at",
+        "transaction_id, status, kit_id, amount, customer_name, pix_qrcode, pix_qrcode_image, pix_copy_paste, expires_at, paid_at",
       )
       .eq("transaction_id", data.transaction_id)
       .maybeSingle();

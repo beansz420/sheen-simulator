@@ -21,9 +21,9 @@ export const Route = createFileRoute("/api/order-status")({
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { data: order, error } = await supabaseAdmin
           .from("orders")
-          .select(
-            "transaction_id, status, amount, customer_name, pix_qrcode, pix_qrcode_image, pix_copy_paste, expires_at, paid_at",
-          )
+        .select(
+          "transaction_id, status, kit_id, amount, customer_name, pix_qrcode, pix_qrcode_image, pix_copy_paste, expires_at, paid_at",
+        )
           .eq("transaction_id", parsed.data.transaction_id)
           .maybeSingle();
 
