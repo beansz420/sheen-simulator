@@ -75,8 +75,8 @@ export function KitsSection() {
             Quanto mais unidades, <span className="font-bold text-foreground">maior a economia</span>
           </p>
         </div>
-        {kits.map((k, i) => (
-          <KitCard key={i} kit={k} id={`kit-${i + 1}`} />
+        {kits.map((k) => (
+          <KitCard key={k.id} kit={k} id={`kit-${k.id}`} />
         ))}
         <p className="text-center text-xs text-muted-foreground">
           🔒 Pagamento 100% seguro · Seus dados protegidos
