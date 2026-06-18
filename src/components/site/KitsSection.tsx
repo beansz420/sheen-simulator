@@ -3,7 +3,7 @@ import { useCheckout } from "@/components/checkout/CheckoutProvider";
 import kit1 from "@/assets/kit-1un.webp";
 import kit2 from "@/assets/kit-2un.webp";
 import kit3 from "@/assets/kit-3un-serum.webp";
-import regeneradorAsset from "@/assets/kit-regenerador.jpg.asset.json";
+import kit4 from "@/assets/kit-regenerador.webp";
 
 type Kit = {
   id: "1" | "2" | "3" | "4";
@@ -32,7 +32,7 @@ const kits: Kit[] = [
   },
   {
     id: "4",
-    image: regeneradorAsset.url,
+    image: kit4,
     title: "1 Regenerador Dérmico Anti-estrias",
     subtitle: "Com Hidroxi C™ - Trata e previne todos os tipos de estrias",
     price: "R$ 59,90",
