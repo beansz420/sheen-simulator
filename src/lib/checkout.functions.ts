@@ -200,7 +200,7 @@ export const getOrderStatus = createServerFn({ method: "GET" })
     const { data: order, error } = await supabaseAdmin
       .from("orders")
       .select(
-        "transaction_id, status, amount, customer_name, pix_qrcode, pix_qrcode_image, pix_copy_paste, expires_at, paid_at",
+        "transaction_id, status, kit_id, amount, customer_name, pix_qrcode, pix_qrcode_image, pix_copy_paste, expires_at, paid_at",
       )
       .eq("transaction_id", data.transaction_id)
       .maybeSingle();

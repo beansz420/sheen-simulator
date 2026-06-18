@@ -659,7 +659,7 @@ function PixStep({ transactionId, onClose }: { transactionId: string; onClose: (
     if (!data?.ok || data.order.status !== "paid") return;
     const eventId = purchaseEventId(transactionId);
     const amount = Number(data.order.amount);
-    const matchedKit = (Object.values(KITS) as Array<typeof KITS["1"]>).find((k) => k.price === amount);
+    const matchedKit = data.order.kit_id ? KITS[data.order.kit_id as KitId] : undefined;
     if (!hasTrackedPurchase(transactionId)) {
       const didTrack = fbqTrack(
         "Purchase",
