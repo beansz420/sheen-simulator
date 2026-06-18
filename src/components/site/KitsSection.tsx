@@ -3,9 +3,10 @@ import { useCheckout } from "@/components/checkout/CheckoutProvider";
 import kit1 from "@/assets/kit-1un.webp";
 import kit2 from "@/assets/kit-2un.webp";
 import kit3 from "@/assets/kit-3un-serum.webp";
+import regeneradorAsset from "@/assets/kit-regenerador.jpg.asset.json";
 
 type Kit = {
-  id: "1" | "2" | "3";
+  id: "1" | "2" | "3" | "4";
   image: string;
   title: string;
   subtitle: string;
@@ -25,6 +26,15 @@ const kits: Kit[] = [
     image: kit1,
     title: "1 Clareador Dérmico",
     subtitle: "Niacinamida + Ácido Glicólico + Lumin White",
+    price: "R$ 59,90",
+    oldPrice: "R$ 99,90",
+    off: "-40% OFF",
+  },
+  {
+    id: "4",
+    image: regeneradorAsset.url,
+    title: "1 Regenerador Dérmico Anti-estrias",
+    subtitle: "Com Hidroxi C™ - Trata e previne todos os tipos de estrias",
     price: "R$ 59,90",
     oldPrice: "R$ 99,90",
     off: "-40% OFF",
@@ -149,7 +159,7 @@ function KitCard({ kit, id }: { kit: Kit; id?: string }) {
   return card;
 }
 
-function BuyButton({ kitId }: { kitId: "1" | "2" | "3" }) {
+function BuyButton({ kitId }: { kitId: "1" | "2" | "3" | "4" }) {
   const { open } = useCheckout();
   return (
     <button

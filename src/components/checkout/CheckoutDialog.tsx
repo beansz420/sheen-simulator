@@ -36,14 +36,21 @@ import { KITS, type KitId } from "@/lib/kits";
 import kit1 from "@/assets/kit-1un.webp";
 import kit2 from "@/assets/kit-2un.webp";
 import kit3 from "@/assets/kit-3un-serum.webp";
+import regeneradorAsset from "@/assets/kit-regenerador.jpg.asset.json";
 
-const KIT_IMAGES: Record<KitId, string> = { "1": kit1, "2": kit2, "3": kit3 };
+const KIT_IMAGES: Record<KitId, string> = {
+  "1": kit1,
+  "2": kit2,
+  "3": kit3,
+  "4": regeneradorAsset.url,
+};
 
 // Preço "de" simulado para mostrar economia (promoção)
 const KIT_ORIGINAL_PRICE: Record<KitId, number> = {
   "1": 89.9,
   "2": 159.8,
   "3": 239.7,
+  "4": 99.9,
 };
 
 const brl = (n: number) => `R$ ${n.toFixed(2).replace(".", ",")}`;

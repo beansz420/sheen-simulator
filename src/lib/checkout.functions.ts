@@ -19,7 +19,7 @@ const TrackingSchema = z
   .optional();
 
 const CheckoutSchema = z.object({
-  kitId: z.enum(["1", "2", "3"]),
+  kitId: z.enum(["1", "2", "3", "4"]),
   customer_name: z.string().trim().min(2).max(120),
   customer_email: z.string().trim().email().max(255),
   customer_phone: z.string().trim().min(10).max(20),
