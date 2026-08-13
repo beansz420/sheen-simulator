@@ -47,12 +47,78 @@ function readCookie(name: string) {
     ?.split("=")[1];
 }
 
-export function getMetaBrowserIds() {
-  return {
-    fbp: readCookie("_fbp"),
-    fbc: readCookie("_fbc"),
-  };
+const FBC_STORAGE_KEY = "meta_fbc_v1";
+const FBP_STORAGE_KEY = "meta_fbp_v1";
+
+function writeCookie(name: string, value: string, days = 90) {
+  if (typeof document === "undefined") return;
+  try {
+    document.cookie = `${name}=${value}; path=/; max-age=${days * 24 * 60 * 60}; SameSite=Lax`;
+  } catch {
+    // ignore
+  }
 }
+
+function readStore(key: string) {
+  try {
+    return localStorage.getItem(key) || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function writeStore(key: string, value: string) {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // ignore
+  }
+}
+
+/**
+ * Garante _fbc e _fbp mesmo quando o cookie do Pixel ainda não existe.
+ * Formato oficial Meta: fb.<subdomainIndex>.<creationTime>.<fbclid|randomNumber>
+ * - _fbc é reconstruído a partir do fbclid da URL (ou do último fbclid salvo)
+ * - _fbp é gerado se ausente, garantindo dedupe/matching no CAPI
+ */
+export function ensureMetaBrowserIds(): { fbp?: string; fbc?: string } {
+  if (typeof window === "undefined") return {};
+
+  let fbc = readCookie("_fbc");
+  let fbclid: string | null = null;
+  try {
+    fbclid = new URL(window.location.href).searchParams.get("fbclid");
+  } catch {
+    fbclid = null;
+  }
+
+  if (fbclid) {
+    const built = `fb.1.${Date.now()}.${fbclid}`;
+    if (!fbc || !fbc.endsWith(fbclid)) {
+      fbc = built;
+      writeCookie("_fbc", built);
+    }
+  }
+  if (!fbc) fbc = readStore(FBC_STORAGE_KEY);
+  if (fbc) {
+    writeStore(FBC_STORAGE_KEY, fbc);
+    if (!readCookie("_fbc")) writeCookie("_fbc", fbc);
+  }
+
+  let fbp = readCookie("_fbp") || readStore(FBP_STORAGE_KEY);
+  if (!fbp) {
+    fbp = `fb.1.${Date.now()}.${Math.floor(Math.random() * 1e10)}`;
+  }
+  writeStore(FBP_STORAGE_KEY, fbp);
+  if (!readCookie("_fbp")) writeCookie("_fbp", fbp);
+
+  return { fbp, fbc };
+}
+
+export function getMetaBrowserIds() {
+  return ensureMetaBrowserIds();
+}
+
 
 type MetaAdvancedMatchingInput = {
   customer_email?: string;
