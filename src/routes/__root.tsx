@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { captureTrackingFromUrl } from "@/lib/tracking";
-import { applyStoredMetaAdvancedMatching } from "@/lib/meta-pixel";
+import { applyStoredMetaAdvancedMatching, ensureMetaBrowserIds } from "@/lib/meta-pixel";
 
 import appCss from "../styles.css?url";
 
@@ -135,6 +135,7 @@ function RootComponent() {
 
   useEffect(() => {
     captureTrackingFromUrl();
+    ensureMetaBrowserIds();
     applyStoredMetaAdvancedMatching();
   }, []);
 
