@@ -108,7 +108,9 @@ export async function sendMetaCapiEvent(opts: {
         event_time: Math.floor(Date.now() / 1000),
         event_id: opts.event_id,
         action_source: "website",
-        event_source_url: opts.event_source_url,
+        event_source_url:
+          opts.event_source_url || order.event_source_url || undefined,
+
         user_data: {
           ...userData,
           client_user_agent: clientUA,
