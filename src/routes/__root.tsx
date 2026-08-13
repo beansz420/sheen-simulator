@@ -10,6 +10,7 @@ import {
 import { useEffect } from "react";
 import { captureTrackingFromUrl } from "@/lib/tracking";
 import { applyStoredMetaAdvancedMatching, ensureMetaBrowserIds } from "@/lib/meta-pixel";
+import { fpAttrs, fpBuildId, fpClass } from "@/lib/daily-fingerprint";
 
 import appCss from "../styles.css?url";
 

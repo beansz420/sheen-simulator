@@ -7,6 +7,7 @@ import { Sections } from "@/components/site/Sections";
 import { Footer } from "@/components/site/Footer";
 import { CheckoutProvider } from "@/components/checkout/CheckoutProvider";
 import heroImg from "@/assets/gallery-clareador-tube.webp";
+import { fpAttrs, fpClass } from "@/lib/daily-fingerprint";
 
 export const Route = createFileRoute("/")({
   component: Index,
