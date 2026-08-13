@@ -108,12 +108,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
+  const buildId = fpBuildId();
   return (
-    <html lang="en">
+    <html lang="en" className={fpClass("html")} {...fpAttrs("html")}>
       <head>
         <HeadContent />
+        <meta name="x-build" content={buildId} />
       </head>
-      <body>
+      <body className={fpClass("body")} {...fpAttrs("body")}>
         <noscript>
           <img
             height="1"
@@ -123,6 +125,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
             alt=""
           />
         </noscript>
+        <div hidden aria-hidden="true" data-b={buildId} />
         {children}
         <Scripts />
       </body>
