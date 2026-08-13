@@ -4,14 +4,18 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { sendMetaCapiEvent, purchaseEventId } from "@/lib/meta-capi.server";
 
 type WebhookPayload = {
-  event: string;
+  event?: string;
   data?: {
     transaction_id?: string;
     status?: string;
+    amount?: number;
+    customer_name?: string;
+    created_at?: string;
     paid_at?: string;
   };
 };
 
+// Conforme docs Pagap: event ∈ { pending, paid, refunded } (expired aceito por segurança)
 const ALLOWED = new Set(["pending", "paid", "expired", "refunded"]);
 const MAX_AGE_SECONDS = 300; // 5 min, conforme recomendação Pagap
 
@@ -34,18 +38,20 @@ export const Route = createFileRoute("/api/public/pagap-webhook")({
     handlers: {
       POST: async ({ request }) => {
         const rawBody = await request.text();
-        const secret = process.env.PAGAP_SECRET_KEY;
+        // Pagap assina com o webhook_secret quando configurado; senão, com a Secret Key.
+        const webhookSecret = process.env.PAGAP_WEBHOOK_SECRET;
+        const apiKey = process.env.PAGAP_SECRET_KEY;
         const signature = request.headers.get("x-pagap-signature");
         const timestamp = request.headers.get("x-pagap-timestamp");
 
-        // Verifica HMAC se a Pagap enviou (ela envia em todos os webhooks).
-        // Falta de header em produção = rejeita.
-        if (secret) {
+        const secrets = [webhookSecret, apiKey].filter(Boolean) as string[];
+        if (secrets.length > 0) {
           if (!signature || !timestamp) {
             console.error("[pagap-webhook] missing signature/timestamp headers");
             return new Response("missing signature", { status: 401 });
           }
-          if (!verifySignature(rawBody, signature, timestamp, secret)) {
+          const valid = secrets.some((s) => verifySignature(rawBody, signature, timestamp, s));
+          if (!valid) {
             console.error("[pagap-webhook] invalid signature");
             return new Response("invalid signature", { status: 401 });
           }
@@ -67,6 +73,38 @@ export const Route = createFileRoute("/api/public/pagap-webhook")({
         const status = payload?.data?.status || payload?.event;
         if (!txId || !status || !ALLOWED.has(status)) {
           return new Response("ignored", { status: 200 });
+        }
+
+        // Idempotência: se já está no mesmo status, não reprocessa (Pagap reenvia até 5x)
+        const { data: existing } = await supabaseAdmin
+          .from("orders")
+          .select("id, status, amount")
+          .eq("transaction_id", txId)
+          .maybeSingle();
+
+        if (!existing) {
+          console.error("[pagap-webhook] order not found", txId);
+          return new Response("ok", { status: 200 });
+        }
+        if (existing.status === status) {
+          return new Response("ok", { status: 200 });
+        }
+        // Não regride um pedido já pago
+        if (existing.status === "paid" && status !== "refunded") {
+          return new Response("ok", { status: 200 });
+        }
+
+        if (
+          status === "paid" &&
+          typeof payload.data?.amount === "number" &&
+          Math.abs(Number(existing.amount) - payload.data.amount) > 0.01
+        ) {
+          console.error("[pagap-webhook] amount mismatch", {
+            txId,
+            expected: existing.amount,
+            received: payload.data.amount,
+          });
+          return new Response("amount mismatch", { status: 400 });
         }
 
         const update: { status: string; paid_at?: string } = { status };
