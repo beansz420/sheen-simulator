@@ -1,7 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { fbqTrack, hasTrackedPurchase, markTrackedPurchase, purchaseEventId } from "@/lib/meta-pixel";
+import {
+  applyStoredMetaAdvancedMatching,
+  ensureMetaBrowserIds,
+  fbqTrack,
+  hasTrackedPurchase,
+  markTrackedPurchase,
+  purchaseEventId,
+} from "@/lib/meta-pixel";
+
 import { fetchOrderStatus } from "@/lib/order-status";
 import { KITS } from "@/lib/kits";
 import { Button } from "@/components/ui/button";
@@ -40,6 +48,11 @@ function OrderPage() {
     const amount = Number(data.order.amount);
     const matchedKit = (Object.values(KITS) as Array<typeof KITS["1"]>).find((k) => k.price === amount);
     if (!hasTrackedPurchase(transactionId)) {
+      // Garante _fbp/_fbc e re-aplica o advanced matching salvo no checkout
+      // antes de disparar o evento, para cobertura de 100% dos parâmetros.
+      ensureMetaBrowserIds();
+      applyStoredMetaAdvancedMatching();
+
       const didTrack = fbqTrack(
         "Purchase",
         {

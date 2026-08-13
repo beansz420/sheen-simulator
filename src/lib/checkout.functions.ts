@@ -63,7 +63,19 @@ export const createPixOrder = createServerFn({ method: "POST" })
 
     // Captura IP/UA da requisição p/ enriquecer Meta CAPI depois
     const clientUA = getRequestHeader("user-agent") || null;
-    const clientIP = getRequestIP({ xForwardedFor: true }) || null;
+    const firstIp = (v: string | undefined | null) =>
+      v ? v.split(",")[0]!.trim() || null : null;
+    const clientIP =
+      getRequestIP({ xForwardedFor: true }) ||
+      firstIp(getRequestHeader("cf-connecting-ip")) ||
+      firstIp(getRequestHeader("x-forwarded-for")) ||
+      firstIp(getRequestHeader("x-real-ip")) ||
+      null;
+
+    // fbc: usa o do browser; se ausente, reconstrói do fbclid (formato oficial Meta)
+    const fbclid = data.tracking_parameters?.fbclid || null;
+    const fbc = data.fbc || (fbclid ? `fb.1.${Date.now()}.${fbclid}` : null);
+    const eventSourceUrl = getRequestHeader("referer") || null;
 
     // 1. Cria registro pendente
     const { data: order, error: insertErr } = await supabaseAdmin
@@ -85,10 +97,13 @@ export const createPixOrder = createServerFn({ method: "POST" })
         address_state: data.address_state.toUpperCase(),
         items: [{ id: kit.id, name: kit.name, quantity: kit.quantity, price: kit.price }],
         fbp: data.fbp || null,
-        fbc: data.fbc || null,
+        fbc,
+        fbclid,
+        event_source_url: eventSourceUrl,
         client_user_agent: clientUA,
         client_ip_address: clientIP,
       })
+
       .select()
       .single();
 
