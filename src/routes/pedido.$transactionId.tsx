@@ -1,7 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { fbqTrack, hasTrackedPurchase, markTrackedPurchase, purchaseEventId } from "@/lib/meta-pixel";
+import {
+  applyStoredMetaAdvancedMatching,
+  ensureMetaBrowserIds,
+  fbqTrack,
+  hasTrackedPurchase,
+  markTrackedPurchase,
+  purchaseEventId,
+} from "@/lib/meta-pixel";
+
 import { fetchOrderStatus } from "@/lib/order-status";
 import { KITS } from "@/lib/kits";
 import { Button } from "@/components/ui/button";
