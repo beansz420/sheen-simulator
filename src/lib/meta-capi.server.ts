@@ -31,7 +31,7 @@ export async function sendMetaCapiEvent(opts: {
   const { data: order } = await supabaseAdmin
     .from("orders")
     .select(
-      "amount, kit_id, customer_email, customer_phone, customer_name, customer_document, address_city, address_state, address_cep, fbp, fbc, client_user_agent, client_ip_address",
+      "id, amount, kit_id, customer_email, customer_phone, customer_name, customer_document, address_city, address_state, address_cep, fbp, fbc, fbclid, event_source_url, client_user_agent, client_ip_address",
     )
     .eq("transaction_id", opts.transaction_id)
     .maybeSingle();
@@ -47,23 +47,40 @@ export async function sendMetaCapiEvent(opts: {
   // Telefone Brasil: prepend country code se ainda não tem.
   const phoneE164 = phone.length === 10 || phone.length === 11 ? `55${phone}` : phone;
 
+  // external_id: CPF quando existir, senão o id do pedido — nunca vazio.
+  const externalIdSource = order.customer_document?.replace(/\D/g, "") || order.id;
+
   const userData: Record<string, string | undefined> = {
     em: sha256(order.customer_email),
     ph: sha256(phoneE164),
     fn: sha256(firstName),
-    ln: sha256(lastName),
+    ln: sha256(lastName || firstName),
     ct: sha256(order.address_city?.replace(/\s+/g, "")),
     st: sha256(order.address_state?.toLowerCase()),
     zp: sha256((order.address_cep || "").replace(/\D/g, "")),
     country: sha256("br"),
-    external_id: sha256(order.customer_document?.replace(/\D/g, "")),
+    external_id: sha256(externalIdSource),
   };
 
   // user_data extra (não-hash): IP, UA, fbp, fbc — fundamentais p/ EMQ alto
   const clientUA = opts.user_agent || order.client_user_agent || undefined;
   const clientIP = opts.client_ip_address || order.client_ip_address || undefined;
   const fbp = opts.fbp || order.fbp || undefined;
-  const fbc = opts.fbc || order.fbc || undefined;
+  const fbc =
+    opts.fbc ||
+    order.fbc ||
+    (order.fbclid ? `fb.1.${Date.now()}.${order.fbclid}` : undefined);
+
+  if (!clientIP || !clientUA || !fbp) {
+    console.warn("[meta-capi] parâmetros parciais", {
+      tx: opts.transaction_id,
+      ip: Boolean(clientIP),
+      ua: Boolean(clientUA),
+      fbp: Boolean(fbp),
+      fbc: Boolean(fbc),
+    });
+  }
+
 
   // custom_data rico: Meta usa content_ids, content_name, num_items p/ otimização
   const kit = order.kit_id ? KITS[order.kit_id as KitId] : null;
