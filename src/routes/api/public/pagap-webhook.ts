@@ -122,14 +122,22 @@ export const Route = createFileRoute("/api/public/pagap-webhook")({
 
         // Dispara Meta Purchase via CAPI. event_id determinístico
         // (purchase_<txId>) deduplica reenvios do webhook e o Pixel do browser.
-        if (status === "paid") {
+        // Webhooks de teste (header x-pagap-test ou flag no payload) nunca
+        // enviam evento ao Meta, para não inflar as conversões reais.
+        const isTest =
+          request.headers.get("x-pagap-test") === "1" ||
+          (payload as { test?: boolean }).test === true;
+        if (status === "paid" && !isTest) {
           await sendMetaCapiEvent({
             event_name: "Purchase",
             event_id: purchaseEventId(txId),
             transaction_id: txId,
             event_source_url: `https://clareador.com/pedido/${txId}`,
           }).catch((e) => console.error("[meta-capi] webhook purchase failed", e));
+        } else if (isTest) {
+          console.log("[pagap-webhook] teste detectado, CAPI não disparado", txId);
         }
+
 
         return new Response("ok", { status: 200 });
       },
