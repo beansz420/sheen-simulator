@@ -99,7 +99,7 @@ function CheckoutBody({ kitId, onClose }: { kitId: KitId; onClose: () => void })
   return (
     <div className="min-h-full bg-[#f4f6fa] pb-[env(safe-area-inset-bottom)]">
       {/* Você está comprando */}
-      <div className="sticky top-0 z-10 border-b border-slate-200/70 bg-[#f4f6fa]/95 px-3 pb-3 pt-3 backdrop-blur sm:px-6 sm:pb-4 sm:pt-5">
+      <div className="z-10 border-b border-slate-200/70 bg-[#f4f6fa]/95 px-3 pb-3 pt-3 backdrop-blur sm:sticky sm:top-0 sm:px-6 sm:pb-4 sm:pt-5">
         <div className="mb-2 flex items-center justify-between gap-2">
           <button
             type="button"
@@ -204,7 +204,7 @@ function Field({
         <Icon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <input
           {...props}
-          className={`h-11 w-full rounded-lg border bg-white pl-10 pr-9 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
+          className={`h-12 w-full rounded-lg border bg-white pl-10 pr-9 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 sm:h-11 sm:text-sm ${
             error
               ? "border-red-400 focus:border-red-400 focus:ring-red-200"
               : "border-slate-200 focus:border-[color:var(--ring)] focus:ring-[color:var(--ring)]/30"
@@ -280,6 +280,15 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
       address_city: result.localidade || f.address_city,
       address_state: result.uf || f.address_state,
     }));
+    // Após preencher o endereço, leva o usuário direto ao único campo que falta.
+    if (result.logradouro) focusField("co-number");
+  };
+
+  const focusField = (id: string) => {
+    const el = document.getElementById(id) as HTMLInputElement | null;
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    setTimeout(() => el.focus({ preventScroll: true }), 250);
   };
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -287,6 +296,7 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
     setError(null);
     if (!isValidCPF(form.customer_document)) {
       setCpfError("CPF inválido. Verifique os números.");
+      focusField("co-cpf");
       return;
     }
     setLoading(true);
@@ -301,6 +311,7 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
       if (!res.ok) {
         setError(res.error);
         setLoading(false);
+        document.getElementById("co-error")?.scrollIntoView({ behavior: "smooth", block: "center" });
         return;
       }
       onSuccess(res.transaction_id);
@@ -308,16 +319,21 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
       console.error(err);
       setError("Erro ao processar. Verifique os dados e tente novamente.");
       setLoading(false);
+      document.getElementById("co-error")?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   };
 
   return (
-    <form onSubmit={onSubmit} className="space-y-3 px-3 pb-6 pt-3 sm:space-y-4 sm:px-6 sm:pt-4">
+    <form
+      onSubmit={onSubmit}
+      className="space-y-3 px-3 pb-28 pt-3 sm:space-y-4 sm:px-6 sm:pb-6 sm:pt-4"
+    >
       {/* Step 1 - Dados pessoais */}
-      <section className="rounded-2xl bg-white p-5 shadow-sm">
+      <section className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
         <StepBadge n={1} label="Dados pessoais" />
         <div className="space-y-4">
           <Field
+            id="co-name"
             label="Nome completo"
             icon={User}
             value={form.customer_name}
@@ -325,6 +341,9 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
             placeholder="Seu nome"
             required
             maxLength={120}
+            autoComplete="name"
+            autoCapitalize="words"
+            enterKeyHint="next"
           />
           <EmailFieldWithSuggestions
             value={form.customer_email}
@@ -332,6 +351,7 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
           />
           <div className="grid gap-4 sm:grid-cols-2">
             <Field
+              id="co-cpf"
               label="CPF"
               icon={ShieldAlert}
               value={form.customer_document}
@@ -340,6 +360,7 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
               required
               inputMode="numeric"
               maxLength={14}
+              enterKeyHint="next"
               error={cpfError}
               rightSlot={
                 isValidCPF(form.customer_document) ? (
@@ -348,8 +369,10 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
               }
             />
             <Field
+              id="co-phone"
               label="Celular"
               icon={Phone}
+              type="tel"
               value={form.customer_phone}
               onChange={(e) =>
                 setForm((f) => ({ ...f, customer_phone: maskPhone(e.target.value) }))
@@ -358,16 +381,19 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
               required
               inputMode="tel"
               maxLength={16}
+              autoComplete="tel"
+              enterKeyHint="next"
             />
           </div>
         </div>
       </section>
 
       {/* Step 2 - Endereço */}
-      <section className="rounded-2xl bg-white p-5 shadow-sm">
+      <section className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
         <StepBadge n={2} label="Endereço" />
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
+            id="co-cep"
             label="CEP"
             icon={MapPin}
             value={form.address_cep}
@@ -376,6 +402,8 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
             required
             inputMode="numeric"
             maxLength={9}
+            autoComplete="postal-code"
+            enterKeyHint="next"
             error={cepStatus === "error" ? "CEP não encontrado." : null}
             rightSlot={
               cepStatus === "loading" ? (
@@ -386,6 +414,7 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
             }
           />
           <Field
+            id="co-state"
             label="Estado"
             icon={Map}
             value={form.address_state}
@@ -395,8 +424,11 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
             placeholder="UF"
             required
             maxLength={2}
+            autoComplete="address-level1"
+            autoCapitalize="characters"
           />
           <Field
+            id="co-city"
             label="Cidade"
             icon={Landmark}
             value={form.address_city}
@@ -404,8 +436,10 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
             placeholder="Sua cidade"
             required
             maxLength={120}
+            autoComplete="address-level2"
           />
           <Field
+            id="co-neighborhood"
             label="Bairro"
             icon={Map}
             value={form.address_neighborhood}
@@ -413,9 +447,11 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
             placeholder="Seu bairro"
             required
             maxLength={120}
+            autoComplete="address-level3"
           />
           <div className="sm:col-span-2">
             <Field
+              id="co-street"
               label="Rua"
               icon={Home}
               value={form.address_street}
@@ -423,9 +459,11 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
               placeholder="Sua rua"
               required
               maxLength={200}
+              autoComplete="address-line1"
             />
           </div>
           <Field
+            id="co-number"
             label="Número"
             icon={Hash}
             value={form.address_number}
@@ -433,20 +471,25 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
             placeholder="123"
             required
             maxLength={20}
+            inputMode="numeric"
+            enterKeyHint="next"
           />
           <Field
+            id="co-complement"
             label="Complemento"
             icon={Building2}
             value={form.address_complement}
             onChange={set("address_complement")}
             placeholder="Apto, Bloco, etc"
             maxLength={100}
+            autoComplete="address-line2"
+            enterKeyHint="done"
           />
         </div>
       </section>
 
       {/* Step 3 - Pagamento */}
-      <section className="rounded-2xl bg-white p-5 shadow-sm">
+      <section className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
         <div className="flex items-start justify-between">
           <StepBadge n={3} label="Pagamento" />
           <span className="text-xs font-bold" style={{ color: ACCENT }}>
@@ -501,7 +544,10 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
         </div>
 
         {error && (
-          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div
+            id="co-error"
+            className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          >
             {error}
           </div>
         )}
@@ -526,6 +572,24 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
         <span className="flex items-center gap-1.5">
           <ShieldCheck className="h-3.5 w-3.5" /> Dados protegidos
         </span>
+      </div>
+
+      {/* CTA fixo no mobile: o botão nunca fica fora da tela */}
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200 bg-white/95 px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2.5 backdrop-blur sm:hidden">
+        <div className="mb-1.5 flex items-baseline justify-between text-xs">
+          <span className="font-semibold text-slate-600">Total com frete grátis</span>
+          <span className="text-base font-extrabold" style={{ color: ACCENT }}>
+            {brl(kit.price)}
+          </span>
+        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="flex h-12 w-full items-center justify-center rounded-lg text-base font-bold text-white shadow-sm transition-opacity disabled:opacity-60"
+          style={{ background: ACCENT }}
+        >
+          {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : "Gerar Pix"}
+        </button>
       </div>
     </form>
   );
