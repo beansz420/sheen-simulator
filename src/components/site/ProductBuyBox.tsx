@@ -16,31 +16,6 @@ export function ProductBuyBox() {
 
   return (
     <div className="space-y-4">
-      {/* Live viewers */}
-      <div className="flex items-center justify-between text-xs">
-        <span className="flex items-center gap-2 text-muted-foreground">
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
-            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-success" />
-          </span>
-          <Eye className="h-3.5 w-3.5" /> 187 vendo agora
-        </span>
-      </div>
-
-      {/* Title */}
-      <h1 className="text-2xl font-extrabold leading-tight tracking-tight md:text-4xl">
-        Clareador Dérmico Cicatribem
-      </h1>
-
-      {/* Ratings */}
-      <div className="flex items-center gap-2">
-        {[...Array(5)].map((_, i) => (
-          <Star key={i} className="h-4 w-4 fill-promo text-promo" />
-        ))}
-        <span className="text-sm font-semibold">4.9</span>
-        <span className="text-sm text-muted-foreground">(2.847 avaliações)</span>
-      </div>
-
       {/* Hero price */}
       <div className="rounded-2xl border bg-card p-4 shadow-sm">
         <div className="flex flex-wrap items-center gap-3">
