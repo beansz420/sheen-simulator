@@ -15,18 +15,28 @@ export function ProductBuyBox() {
   }, []);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Hero price */}
-      <div className="rounded-2xl border bg-card p-4 shadow-sm">
+      <div className="rounded-2xl border bg-card p-3.5 shadow-sm sm:p-4">
         <div className="flex flex-wrap items-center gap-3">
           <span className="text-3xl font-extrabold text-foreground">R$ 59,90</span>
           <span className="text-sm font-medium text-muted-foreground line-through">R$ 99,90</span>
           <span className="rounded-md bg-destructive px-2 py-0.5 text-xs font-bold text-destructive-foreground">-40%</span>
+          <span className="ml-auto flex items-center gap-1 text-xs font-bold text-success">
+            <Truck className="h-3.5 w-3.5" /> Frete grátis
+          </span>
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">
-          Cicatribem · Niacinamida + Ácido Glicólico + Lumin White
+        <p className="mt-1.5 text-xs text-muted-foreground">
+          Niacinamida + Ácido Glicólico + Lumin White · em até 12x
         </p>
       </div>
+
+      <button
+        onClick={() => document.getElementById("kit-2")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(22,95%,55%)] py-4 text-base font-extrabold uppercase tracking-wide text-white shadow-xl transition-transform hover:scale-[1.01] sm:py-5"
+      >
+        <ShoppingCart className="h-5 w-5" /> Quero o meu agora
+      </button>
 
       {/* Low stock alert */}
       <div className="rounded-xl border border-promo/40 bg-promo/10 px-4 py-2.5 text-sm">
@@ -42,13 +52,6 @@ export function ProductBuyBox() {
         </span>
       </div>
 
-      <button
-        onClick={() => document.getElementById("kit-2")?.scrollIntoView({ behavior: "smooth", block: "center" })}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(22,95%,55%)] py-5 text-base font-extrabold uppercase tracking-wide text-white shadow-xl transition-transform hover:scale-[1.01]"
-      >
-        <ShoppingCart className="h-5 w-5" /> Quero o meu agora
-      </button>
-      <p className="text-center text-xs text-muted-foreground">Frete Grátis + Bônus Exclusivos</p>
 
       {/* Trust badges */}
       <div className="grid grid-cols-3 gap-2 pt-1">
