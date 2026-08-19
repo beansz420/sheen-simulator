@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Announcement } from "@/components/site/Announcement";
 import { Header } from "@/components/site/Header";
 import { ProductGallery } from "@/components/site/ProductGallery";
+import { ProductHeading } from "@/components/site/ProductHeading";
 import { ProductBuyBox } from "@/components/site/ProductBuyBox";
 import { Sections } from "@/components/site/Sections";
 import { Footer } from "@/components/site/Footer";
