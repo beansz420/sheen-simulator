@@ -280,6 +280,8 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
       address_city: result.localidade || f.address_city,
       address_state: result.uf || f.address_state,
     }));
+    // Após preencher o endereço, leva o usuário direto ao único campo que falta.
+    if (result.logradouro) focusField("co-number");
   };
 
   const focusField = (id: string) => {
