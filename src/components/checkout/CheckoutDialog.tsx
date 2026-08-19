@@ -489,7 +489,7 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
       </section>
 
       {/* Step 3 - Pagamento */}
-      <section className="rounded-2xl bg-white p-5 shadow-sm">
+      <section className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
         <div className="flex items-start justify-between">
           <StepBadge n={3} label="Pagamento" />
           <span className="text-xs font-bold" style={{ color: ACCENT }}>
@@ -544,7 +544,10 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
         </div>
 
         {error && (
-          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div
+            id="co-error"
+            className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          >
             {error}
           </div>
         )}
@@ -569,6 +572,24 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
         <span className="flex items-center gap-1.5">
           <ShieldCheck className="h-3.5 w-3.5" /> Dados protegidos
         </span>
+      </div>
+
+      {/* CTA fixo no mobile: o botão nunca fica fora da tela */}
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200 bg-white/95 px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2.5 backdrop-blur sm:hidden">
+        <div className="mb-1.5 flex items-baseline justify-between text-xs">
+          <span className="font-semibold text-slate-600">Total com frete grátis</span>
+          <span className="text-base font-extrabold" style={{ color: ACCENT }}>
+            {brl(kit.price)}
+          </span>
+        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="flex h-12 w-full items-center justify-center rounded-lg text-base font-bold text-white shadow-sm transition-opacity disabled:opacity-60"
+          style={{ background: ACCENT }}
+        >
+          {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : "Gerar Pix"}
+        </button>
       </div>
     </form>
   );
