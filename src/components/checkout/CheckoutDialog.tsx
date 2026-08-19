@@ -282,11 +282,19 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
     }));
   };
 
+  const focusField = (id: string) => {
+    const el = document.getElementById(id) as HTMLInputElement | null;
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    setTimeout(() => el.focus({ preventScroll: true }), 250);
+  };
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     if (!isValidCPF(form.customer_document)) {
       setCpfError("CPF inválido. Verifique os números.");
+      focusField("co-cpf");
       return;
     }
     setLoading(true);
@@ -301,6 +309,7 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
       if (!res.ok) {
         setError(res.error);
         setLoading(false);
+        document.getElementById("co-error")?.scrollIntoView({ behavior: "smooth", block: "center" });
         return;
       }
       onSuccess(res.transaction_id);
@@ -308,11 +317,15 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
       console.error(err);
       setError("Erro ao processar. Verifique os dados e tente novamente.");
       setLoading(false);
+      document.getElementById("co-error")?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   };
 
   return (
-    <form onSubmit={onSubmit} className="space-y-3 px-3 pb-6 pt-3 sm:space-y-4 sm:px-6 sm:pt-4">
+    <form
+      onSubmit={onSubmit}
+      className="space-y-3 px-3 pb-28 pt-3 sm:space-y-4 sm:px-6 sm:pb-6 sm:pt-4"
+    >
       {/* Step 1 - Dados pessoais */}
       <section className="rounded-2xl bg-white p-5 shadow-sm">
         <StepBadge n={1} label="Dados pessoais" />
