@@ -29,10 +29,15 @@ function Index() {
         <Announcement />
         <Header />
         <main className={fpClass("main")} {...fpAttrs("main")}>
-          <section className={`mx-auto max-w-7xl px-4 py-8 ${fpClass("hero")}`} {...fpAttrs("hero")}>
-            <div className={`grid gap-10 lg:grid-cols-2 lg:gap-16 ${fpClass("herogrid")}`}>
-              <ProductGallery />
-              <ProductBuyBox />
+          <section className={`mx-auto max-w-7xl px-4 py-4 sm:py-8 ${fpClass("hero")}`} {...fpAttrs("hero")}>
+            <div className={`grid gap-4 lg:grid-cols-2 lg:gap-x-16 lg:gap-y-6 ${fpClass("herogrid")}`}>
+              <ProductHeading className="lg:col-start-2 lg:row-start-1" />
+              <div className="lg:col-start-1 lg:row-start-1 lg:row-span-2">
+                <ProductGallery />
+              </div>
+              <div className="lg:col-start-2 lg:row-start-2">
+                <ProductBuyBox />
+              </div>
             </div>
           </section>
           <Sections />
