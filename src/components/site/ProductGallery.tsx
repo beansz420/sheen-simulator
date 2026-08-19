@@ -28,7 +28,7 @@ export function ProductGallery() {
           key={i}
           src={slides[i].src}
           alt={slides[i].alt}
-          className="aspect-square w-full object-cover animate-in fade-in duration-300"
+          className="h-[34vh] max-h-[330px] w-full object-cover animate-in fade-in duration-300 sm:aspect-square sm:h-auto sm:max-h-none"
           width={1024}
           height={1024}
           loading={i === 0 ? "eager" : "lazy"}
