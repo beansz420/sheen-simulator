@@ -327,10 +327,11 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
       className="space-y-3 px-3 pb-28 pt-3 sm:space-y-4 sm:px-6 sm:pb-6 sm:pt-4"
     >
       {/* Step 1 - Dados pessoais */}
-      <section className="rounded-2xl bg-white p-5 shadow-sm">
+      <section className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
         <StepBadge n={1} label="Dados pessoais" />
         <div className="space-y-4">
           <Field
+            id="co-name"
             label="Nome completo"
             icon={User}
             value={form.customer_name}
@@ -338,6 +339,9 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
             placeholder="Seu nome"
             required
             maxLength={120}
+            autoComplete="name"
+            autoCapitalize="words"
+            enterKeyHint="next"
           />
           <EmailFieldWithSuggestions
             value={form.customer_email}
@@ -345,6 +349,7 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
           />
           <div className="grid gap-4 sm:grid-cols-2">
             <Field
+              id="co-cpf"
               label="CPF"
               icon={ShieldAlert}
               value={form.customer_document}
@@ -353,6 +358,7 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
               required
               inputMode="numeric"
               maxLength={14}
+              enterKeyHint="next"
               error={cpfError}
               rightSlot={
                 isValidCPF(form.customer_document) ? (
@@ -361,8 +367,10 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
               }
             />
             <Field
+              id="co-phone"
               label="Celular"
               icon={Phone}
+              type="tel"
               value={form.customer_phone}
               onChange={(e) =>
                 setForm((f) => ({ ...f, customer_phone: maskPhone(e.target.value) }))
@@ -371,16 +379,19 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
               required
               inputMode="tel"
               maxLength={16}
+              autoComplete="tel"
+              enterKeyHint="next"
             />
           </div>
         </div>
       </section>
 
       {/* Step 2 - Endereço */}
-      <section className="rounded-2xl bg-white p-5 shadow-sm">
+      <section className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
         <StepBadge n={2} label="Endereço" />
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
+            id="co-cep"
             label="CEP"
             icon={MapPin}
             value={form.address_cep}
@@ -389,6 +400,8 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
             required
             inputMode="numeric"
             maxLength={9}
+            autoComplete="postal-code"
+            enterKeyHint="next"
             error={cepStatus === "error" ? "CEP não encontrado." : null}
             rightSlot={
               cepStatus === "loading" ? (
@@ -399,6 +412,7 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
             }
           />
           <Field
+            id="co-state"
             label="Estado"
             icon={Map}
             value={form.address_state}
@@ -408,8 +422,11 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
             placeholder="UF"
             required
             maxLength={2}
+            autoComplete="address-level1"
+            autoCapitalize="characters"
           />
           <Field
+            id="co-city"
             label="Cidade"
             icon={Landmark}
             value={form.address_city}
@@ -417,8 +434,10 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
             placeholder="Sua cidade"
             required
             maxLength={120}
+            autoComplete="address-level2"
           />
           <Field
+            id="co-neighborhood"
             label="Bairro"
             icon={Map}
             value={form.address_neighborhood}
@@ -426,9 +445,11 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
             placeholder="Seu bairro"
             required
             maxLength={120}
+            autoComplete="address-level3"
           />
           <div className="sm:col-span-2">
             <Field
+              id="co-street"
               label="Rua"
               icon={Home}
               value={form.address_street}
@@ -436,9 +457,11 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
               placeholder="Sua rua"
               required
               maxLength={200}
+              autoComplete="address-line1"
             />
           </div>
           <Field
+            id="co-number"
             label="Número"
             icon={Hash}
             value={form.address_number}
@@ -446,14 +469,19 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
             placeholder="123"
             required
             maxLength={20}
+            inputMode="numeric"
+            enterKeyHint="next"
           />
           <Field
+            id="co-complement"
             label="Complemento"
             icon={Building2}
             value={form.address_complement}
             onChange={set("address_complement")}
             placeholder="Apto, Bloco, etc"
             maxLength={100}
+            autoComplete="address-line2"
+            enterKeyHint="done"
           />
         </div>
       </section>
