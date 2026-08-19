@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Star, ShoppingCart, Truck, Eye, Users, ShieldCheck, Award } from "lucide-react";
+import { ShoppingCart, Truck, Users, ShieldCheck, Award } from "lucide-react";
 import { fbqTrack } from "@/lib/meta-pixel";
 
 export function ProductBuyBox() {
