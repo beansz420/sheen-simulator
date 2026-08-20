@@ -31,7 +31,7 @@ export async function sendMetaCapiEvent(opts: {
   const { data: order } = await supabaseAdmin
     .from("orders")
     .select(
-      "id, amount, kit_id, customer_email, customer_phone, customer_name, customer_document, address_city, address_state, address_cep, fbp, fbc, fbclid, event_source_url, client_user_agent, client_ip_address",
+      "id, amount, kit_id, customer_email, customer_phone, customer_name, customer_document, address_city, address_state, address_cep, fbp, fbc, fbclid, event_source_url, client_user_agent, client_ip_address, capi_attempts",
     )
     .eq("transaction_id", opts.transaction_id)
     .maybeSingle();
@@ -123,33 +123,57 @@ export async function sendMetaCapiEvent(opts: {
     ],
   };
 
-  try {
-    const res = await fetch(
-      `https://graph.facebook.com/${API_VERSION}/${PIXEL_ID}/events?access_token=${token}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      },
-    );
-    const body = (await res.json().catch(() => ({}))) as {
-      error?: { message?: string };
-      events_received?: number;
-      fbtrace_id?: string;
-    };
-    if (!res.ok) {
-      console.error("[meta-capi] error:", res.status, body);
-      return { ok: false as const, error: body.error?.message || "CAPI error" };
+  const markAttempt = async (error: string | null) => {
+    await supabaseAdmin
+      .from("orders")
+      .update({
+        capi_attempts: ((order as { capi_attempts?: number }).capi_attempts ?? 0) + 1,
+        capi_last_error: error,
+        ...(error === null && opts.event_name === "Purchase"
+          ? { capi_purchase_sent_at: new Date().toISOString() }
+          : {}),
+      })
+      .eq("transaction_id", opts.transaction_id);
+  };
+
+  // Até 3 tentativas com backoff — falha de rede não pode custar uma venda.
+  let lastError = "unknown";
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const res = await fetch(
+        `https://graph.facebook.com/${API_VERSION}/${PIXEL_ID}/events?access_token=${token}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        },
+      );
+      const body = (await res.json().catch(() => ({}))) as {
+        error?: { message?: string };
+        events_received?: number;
+        fbtrace_id?: string;
+      };
+      if (!res.ok) {
+        lastError = `${res.status} ${body.error?.message || "CAPI error"}`;
+        console.error("[meta-capi] error:", res.status, body);
+      } else {
+        console.log(
+          `[meta-capi] ${opts.event_name} sent tx=${opts.transaction_id} event_id=${opts.event_id} received=${body.events_received} trace=${body.fbtrace_id}`,
+        );
+        await markAttempt(null);
+        return { ok: true as const };
+      }
+    } catch (err) {
+      lastError = err instanceof Error ? err.message : "Network error";
+      console.error("[meta-capi] fetch error:", err);
     }
-    console.log(
-      `[meta-capi] ${opts.event_name} sent tx=${opts.transaction_id} event_id=${opts.event_id} received=${body.events_received} trace=${body.fbtrace_id}`,
-    );
-    return { ok: true as const };
-  } catch (err) {
-    console.error("[meta-capi] fetch error:", err);
-    return { ok: false as const, error: "Network error" };
+    if (attempt < 3) await new Promise((r) => setTimeout(r, attempt * 500));
   }
+
+  await markAttempt(lastError);
+  return { ok: false as const, error: lastError };
 }
+
 
 export function purchaseEventId(transactionId: string) {
   return `purchase_${transactionId}`;
