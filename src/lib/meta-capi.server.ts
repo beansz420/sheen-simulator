@@ -178,3 +178,35 @@ export async function sendMetaCapiEvent(opts: {
 export function purchaseEventId(transactionId: string) {
   return `purchase_${transactionId}`;
 }
+
+/**
+ * Rede de segurança: reenvia Purchase de pedidos pagos cujo CAPI nunca saiu.
+ * Chamado a cada webhook e a cada polling de status — como o site tem tráfego
+ * constante, nenhuma venda fica sem evento por muito tempo.
+ * event_id determinístico garante deduplicação no Meta.
+ */
+export async function sweepUnsentPurchases(limit = 5) {
+  const cutoff = new Date(Date.now() - 60_000).toISOString();
+  const { data: orders } = await supabaseAdmin
+    .from("orders")
+    .select("transaction_id, capi_attempts")
+    .eq("status", "paid")
+    .is("capi_purchase_sent_at", null)
+    .not("transaction_id", "is", null)
+    .lt("paid_at", cutoff)
+    .lt("capi_attempts", 6)
+    .order("paid_at", { ascending: false })
+    .limit(limit);
+
+  if (!orders?.length) return { swept: 0 };
+
+  for (const o of orders) {
+    await sendMetaCapiEvent({
+      event_name: "Purchase",
+      event_id: purchaseEventId(o.transaction_id!),
+      transaction_id: o.transaction_id!,
+    }).catch((e) => console.error("[meta-capi] sweep failed", o.transaction_id, e));
+  }
+  return { swept: orders.length };
+}
+
