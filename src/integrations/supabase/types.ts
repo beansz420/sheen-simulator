@@ -24,6 +24,9 @@ export type Database = {
           address_state: string
           address_street: string
           amount: number
+          capi_attempts: number
+          capi_last_error: string | null
+          capi_purchase_sent_at: string | null
           client_ip_address: string | null
           client_user_agent: string | null
           created_at: string
@@ -56,6 +59,9 @@ export type Database = {
           address_state: string
           address_street: string
           amount: number
+          capi_attempts?: number
+          capi_last_error?: string | null
+          capi_purchase_sent_at?: string | null
           client_ip_address?: string | null
           client_user_agent?: string | null
           created_at?: string
@@ -88,6 +94,9 @@ export type Database = {
           address_state?: string
           address_street?: string
           amount?: number
+          capi_attempts?: number
+          capi_last_error?: string | null
+          capi_purchase_sent_at?: string | null
           client_ip_address?: string | null
           client_user_agent?: string | null
           created_at?: string
