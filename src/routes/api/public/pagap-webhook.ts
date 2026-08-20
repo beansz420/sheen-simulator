@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHmac, timingSafeEqual } from "crypto";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { sendMetaCapiEvent, purchaseEventId } from "@/lib/meta-capi.server";
+import { sendMetaCapiEvent, purchaseEventId, sweepUnsentPurchases } from "@/lib/meta-capi.server";
 
 type WebhookPayload = {
   event?: string;
@@ -143,6 +143,11 @@ export const Route = createFileRoute("/api/public/pagap-webhook")({
         }
 
         if (status === "paid") await firePurchase();
+
+        // Recupera vendas anteriores que ficaram sem evento no Meta.
+        await sweepUnsentPurchases(3).catch((e) =>
+          console.error("[meta-capi] webhook sweep error", e),
+        );
 
         return new Response("ok", { status: 200 });
 
