@@ -34,6 +34,7 @@ const CheckoutSchema = z.object({
   tracking_parameters: TrackingSchema,
   fbp: z.string().max(255).optional(),
   fbc: z.string().max(500).optional(),
+  ic_event_id: z.string().max(100).optional(),
 });
 
 
