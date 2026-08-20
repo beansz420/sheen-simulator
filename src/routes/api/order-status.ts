@@ -40,7 +40,14 @@ export const Route = createFileRoute("/api/order-status")({
             event_id: purchaseEventId(order.transaction_id!),
             transaction_id: order.transaction_id!,
           }).catch((e) => console.error("[meta-capi] order-status fallback failed", e));
+        } else {
+          // Varredura oportunista: recupera vendas antigas sem evento enviado.
+          const { sweepUnsentPurchases } = await import("@/lib/meta-capi.server");
+          await sweepUnsentPurchases(3).catch((e) =>
+            console.error("[meta-capi] sweep error", e),
+          );
         }
+
 
         const { capi_purchase_sent_at: _capi, ...publicOrder } = order;
 

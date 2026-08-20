@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, lazy, Suspense, type ReactNode } from "react";
 import type { KitId } from "@/lib/kits";
 import { KITS } from "@/lib/kits";
-import { fbqTrack } from "@/lib/meta-pixel";
+import { fbqTrack, newCheckoutEventId } from "@/lib/meta-pixel";
 
 const CheckoutDialog = lazy(() =>
   import("./CheckoutDialog").then((m) => ({ default: m.CheckoutDialog })),
@@ -52,14 +52,18 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
       value: kit.price,
       num_items: kit.quantity,
     });
-    fbqTrack("InitiateCheckout", {
-      content_ids: [kit.id],
-      content_name: kit.name,
-      content_type: "product",
-      currency: "BRL",
-      value: kit.price,
-      num_items: kit.quantity,
-    });
+    fbqTrack(
+      "InitiateCheckout",
+      {
+        content_ids: [kit.id],
+        content_name: kit.name,
+        content_type: "product",
+        currency: "BRL",
+        value: kit.price,
+        num_items: kit.quantity,
+      },
+      newCheckoutEventId(),
+    );
     setOpenKit(k);
   };
 

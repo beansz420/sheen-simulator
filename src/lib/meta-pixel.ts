@@ -21,6 +21,28 @@ export function purchaseEventId(transactionId: string) {
   return `purchase_${transactionId}`;
 }
 
+const IC_EVENT_ID_KEY = "meta_ic_event_id";
+
+/** eventID do InitiateCheckout do browser, reaproveitado pelo CAPI (dedupe). */
+export function newCheckoutEventId() {
+  const id = "ic_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+  try {
+    sessionStorage.setItem(IC_EVENT_ID_KEY, id);
+  } catch {
+    // ignore
+  }
+  return id;
+}
+
+export function getCheckoutEventId() {
+  try {
+    return sessionStorage.getItem(IC_EVENT_ID_KEY) || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+
 export function hasTrackedPurchase(transactionId: string) {
   if (typeof window === "undefined") return false;
   try {

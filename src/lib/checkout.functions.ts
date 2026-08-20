@@ -34,6 +34,7 @@ const CheckoutSchema = z.object({
   tracking_parameters: TrackingSchema,
   fbp: z.string().max(255).optional(),
   fbc: z.string().max(500).optional(),
+  ic_event_id: z.string().max(100).optional(),
 });
 
 
@@ -199,6 +200,21 @@ export const createPixOrder = createServerFn({ method: "POST" })
           expires_at: body.expires_at,
         })
         .eq("id", order.id);
+
+      // InitiateCheckout server-side (dedupe com o Pixel via mesmo event_id).
+      if (data.ic_event_id) {
+        const { sendMetaCapiEvent } = await import("./meta-capi.server");
+        await sendMetaCapiEvent({
+          event_name: "InitiateCheckout",
+          event_id: data.ic_event_id,
+          transaction_id: body.transaction_id,
+          event_source_url: eventSourceUrl || undefined,
+          user_agent: clientUA || undefined,
+          client_ip_address: clientIP || undefined,
+          fbp: data.fbp,
+          fbc: fbc || undefined,
+        }).catch((e) => console.error("[meta-capi] InitiateCheckout failed", e));
+      }
 
       return { ok: true as const, transaction_id: body.transaction_id };
     } catch (err) {
