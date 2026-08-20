@@ -194,6 +194,7 @@ export async function sweepUnsentPurchases(limit = 5) {
     .is("capi_purchase_sent_at", null)
     .not("transaction_id", "is", null)
     .lt("paid_at", cutoff)
+    .gt("paid_at", new Date(Date.now() - 24 * 60 * 60_000).toISOString())
     .lt("capi_attempts", 6)
     .order("paid_at", { ascending: false })
     .limit(limit);
