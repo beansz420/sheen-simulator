@@ -52,14 +52,18 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
       value: kit.price,
       num_items: kit.quantity,
     });
-    fbqTrack("InitiateCheckout", {
-      content_ids: [kit.id],
-      content_name: kit.name,
-      content_type: "product",
-      currency: "BRL",
-      value: kit.price,
-      num_items: kit.quantity,
-    });
+    fbqTrack(
+      "InitiateCheckout",
+      {
+        content_ids: [kit.id],
+        content_name: kit.name,
+        content_type: "product",
+        currency: "BRL",
+        value: kit.price,
+        num_items: kit.quantity,
+      },
+      newCheckoutEventId(),
+    );
     setOpenKit(k);
   };
 
