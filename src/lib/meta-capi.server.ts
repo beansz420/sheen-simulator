@@ -31,7 +31,7 @@ export async function sendMetaCapiEvent(opts: {
   const { data: order } = await supabaseAdmin
     .from("orders")
     .select(
-      "id, amount, kit_id, customer_email, customer_phone, customer_name, customer_document, address_city, address_state, address_cep, fbp, fbc, fbclid, event_source_url, client_user_agent, client_ip_address",
+      "id, amount, kit_id, customer_email, customer_phone, customer_name, customer_document, address_city, address_state, address_cep, fbp, fbc, fbclid, event_source_url, client_user_agent, client_ip_address, capi_attempts",
     )
     .eq("transaction_id", opts.transaction_id)
     .maybeSingle();
