@@ -44,10 +44,10 @@ const kits: Kit[] = [
     image: kit2,
     title: "Kit 2 Clareadores Dérmicos",
     subtitle: "Niacinamida + Ácido Glicólico + Lumin White",
-    price: "R$ 89,90",
+    price: "R$ 79,90",
     oldPrice: "R$ 199,80",
-    off: "-55% OFF",
-    perUnit: "(R$ 44,95/un)",
+    off: "-60% OFF",
+    perUnit: "(R$ 39,95/un)",
   },
   {
     id: "3",
