@@ -124,14 +124,14 @@ export async function sendMetaCapiEvent(opts: {
   };
 
   const markAttempt = async (error: string | null) => {
+    // Só Purchase controla o estado de entrega do pedido.
+    if (opts.event_name !== "Purchase") return;
     await supabaseAdmin
       .from("orders")
       .update({
         capi_attempts: ((order as { capi_attempts?: number }).capi_attempts ?? 0) + 1,
         capi_last_error: error,
-        ...(error === null && opts.event_name === "Purchase"
-          ? { capi_purchase_sent_at: new Date().toISOString() }
-          : {}),
+        ...(error === null ? { capi_purchase_sent_at: new Date().toISOString() } : {}),
       })
       .eq("transaction_id", opts.transaction_id);
   };
