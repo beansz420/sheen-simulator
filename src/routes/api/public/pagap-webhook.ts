@@ -78,7 +78,7 @@ export const Route = createFileRoute("/api/public/pagap-webhook")({
         // Idempotência: se já está no mesmo status, não reprocessa (Pagap reenvia até 5x)
         const { data: existing } = await supabaseAdmin
           .from("orders")
-          .select("id, status, amount")
+          .select("id, status, amount, capi_purchase_sent_at")
           .eq("transaction_id", txId)
           .maybeSingle();
 
@@ -86,11 +86,33 @@ export const Route = createFileRoute("/api/public/pagap-webhook")({
           console.error("[pagap-webhook] order not found", txId);
           return new Response("ok", { status: 200 });
         }
-        if (existing.status === status) {
-          return new Response("ok", { status: 200 });
-        }
-        // Não regride um pedido já pago
-        if (existing.status === "paid" && status !== "refunded") {
+
+        const isTest =
+          request.headers.get("x-pagap-test") === "1" ||
+          (payload as { test?: boolean }).test === true;
+
+        // Dispara Meta Purchase via CAPI. event_id determinístico
+        // (purchase_<txId>) deduplica reenvios do webhook e o Pixel do browser.
+        const firePurchase = async () => {
+          if (isTest) {
+            console.log("[pagap-webhook] teste detectado, CAPI não disparado", txId);
+            return;
+          }
+          await sendMetaCapiEvent({
+            event_name: "Purchase",
+            event_id: purchaseEventId(txId),
+            transaction_id: txId,
+            event_source_url: `https://clareiabr.com/pedido/${txId}`,
+          }).catch((e) => console.error("[meta-capi] webhook purchase failed", e));
+        };
+
+        // Já pago: só reenvia o CAPI se ainda não confirmou envio (falha anterior).
+        if (existing.status === "paid") {
+          if (status !== "refunded" && !existing.capi_purchase_sent_at) {
+            await firePurchase();
+          }
+          if (status !== "refunded") return new Response("ok", { status: 200 });
+        } else if (existing.status === status) {
           return new Response("ok", { status: 200 });
         }
 
@@ -120,26 +142,10 @@ export const Route = createFileRoute("/api/public/pagap-webhook")({
           return new Response("db error", { status: 500 });
         }
 
-        // Dispara Meta Purchase via CAPI. event_id determinístico
-        // (purchase_<txId>) deduplica reenvios do webhook e o Pixel do browser.
-        // Webhooks de teste (header x-pagap-test ou flag no payload) nunca
-        // enviam evento ao Meta, para não inflar as conversões reais.
-        const isTest =
-          request.headers.get("x-pagap-test") === "1" ||
-          (payload as { test?: boolean }).test === true;
-        if (status === "paid" && !isTest) {
-          await sendMetaCapiEvent({
-            event_name: "Purchase",
-            event_id: purchaseEventId(txId),
-            transaction_id: txId,
-            event_source_url: `https://clareador.com/pedido/${txId}`,
-          }).catch((e) => console.error("[meta-capi] webhook purchase failed", e));
-        } else if (isTest) {
-          console.log("[pagap-webhook] teste detectado, CAPI não disparado", txId);
-        }
-
+        if (status === "paid") await firePurchase();
 
         return new Response("ok", { status: 200 });
+
       },
     },
   },
