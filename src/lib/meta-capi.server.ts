@@ -88,6 +88,7 @@ export async function sendMetaCapiEvent(opts: {
     currency: "BRL",
     value: Number(order.amount),
     content_type: "product",
+    content_category: "Clareador Dérmico",
     order_id: opts.transaction_id,
   };
   if (kit) {

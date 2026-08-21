@@ -178,33 +178,89 @@ function applyMetaAdvancedMatching(data: MetaAdvancedMatchingData) {
   return true;
 }
 
-export function applyStoredMetaAdvancedMatching() {
-  if (typeof window === "undefined") return false;
+const ANON_ID_KEY = "meta_anon_external_id_v1";
+
+/**
+ * external_id estável por visitante (anônimo). Meta recomenda enviar external_id
+ * em TODOS os eventos — assim ViewContent/AddToCart/InitiateCheckout de quem
+ * ainda não preencheu o formulário também têm identificador para matching.
+ */
+export function getAnonExternalId() {
+  if (typeof window === "undefined") return undefined;
+  let id = readStore(ANON_ID_KEY);
+  if (!id) {
+    id =
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `anon_${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
+    writeStore(ANON_ID_KEY, id);
+  }
+  return id;
+}
+
+function readStoredMatching(): MetaAdvancedMatchingData {
   try {
     const raw = localStorage.getItem(ADVANCED_MATCHING_STORAGE_KEY);
-    if (!raw) return false;
-    return applyMetaAdvancedMatching(JSON.parse(raw) as MetaAdvancedMatchingData);
+    return raw ? (JSON.parse(raw) as MetaAdvancedMatchingData) : {};
   } catch {
-    return false;
+    return {};
   }
+}
+
+/** Aplica o que já está em cache (sincronamente), sem esperar hash. */
+export function applyStoredMetaAdvancedMatching() {
+  if (typeof window === "undefined") return false;
+  return applyMetaAdvancedMatching(readStoredMatching());
+}
+
+let baseMatchingPromise: Promise<MetaAdvancedMatchingData> | null = null;
+
+/**
+ * Garante que country + external_id (anônimo ou real) estejam no advanced
+ * matching de todos os eventos, mesmo na primeira visita.
+ */
+export function ensureMetaAdvancedMatching() {
+  if (typeof window === "undefined") return Promise.resolve({} as MetaAdvancedMatchingData);
+  if (!baseMatchingPromise) {
+    baseMatchingPromise = (async () => {
+      const data = readStoredMatching();
+      if (!data.country) {
+        const country = await sha256("br");
+        if (country) data.country = country;
+      }
+      if (!data.external_id) {
+        const external = await sha256(getAnonExternalId());
+        if (external) data.external_id = external;
+      }
+      try {
+        localStorage.setItem(ADVANCED_MATCHING_STORAGE_KEY, JSON.stringify(data));
+      } catch {
+        // ignore
+      }
+      applyMetaAdvancedMatching(data);
+      return data;
+    })();
+  }
+  return baseMatchingPromise;
 }
 
 export async function setMetaAdvancedMatching(input: MetaAdvancedMatchingInput) {
   const [firstName, ...lastNameParts] = normalizeName(input.customer_name).split(/\s+/).filter(Boolean);
   const phoneDigits = cleanDigits(input.customer_phone);
   const phone = phoneDigits.length === 10 || phoneDigits.length === 11 ? `55${phoneDigits}` : phoneDigits;
-  const data: MetaAdvancedMatchingData = {};
+  const data: MetaAdvancedMatchingData = { ...readStoredMatching() };
 
   const entries: Array<[keyof MetaAdvancedMatchingData, Promise<string | undefined>]> = [
     ["em", sha256(input.customer_email)],
     ["ph", sha256(phone)],
     ["fn", sha256(firstName)],
-    ["ln", sha256(lastNameParts.join(" "))],
+    // Meta exige ln; com nome único, repete o primeiro nome (melhor que vazio).
+    ["ln", sha256(lastNameParts.join(" ") || firstName)],
     ["ct", sha256(input.address_city?.replace(/\s+/g, ""))],
     ["st", sha256(input.address_state)],
     ["zp", sha256(cleanDigits(input.address_cep))],
     ["country", sha256("br")],
-    ["external_id", sha256(cleanDigits(input.customer_document))],
+    ["external_id", sha256(cleanDigits(input.customer_document) || getAnonExternalId())],
   ];
 
   for (const [key, promise] of entries) {
@@ -217,6 +273,7 @@ export async function setMetaAdvancedMatching(input: MetaAdvancedMatchingInput) 
   } catch {
     // ignore storage errors
   }
+  baseMatchingPromise = Promise.resolve(data);
   return applyMetaAdvancedMatching(data);
 }
 
@@ -226,10 +283,19 @@ export function fbqTrack(
   eventID?: string,
 ) {
   if (typeof window === "undefined" || !window.fbq) return false;
-  if (eventID) {
-    window.fbq("track", event, params ?? {}, { eventID });
-  } else {
-    window.fbq("track", event, params ?? {});
-  }
+  // fbp/fbc precisam existir ANTES do evento sair (cobertura de fbc ~100%).
+  ensureMetaBrowserIds();
+  const id = eventID ?? generateEventId();
+  window.fbq("track", event, params ?? {}, { eventID: id });
   return true;
+}
+
+/** Dispara o evento só depois de garantir country/external_id no matching. */
+export async function trackWithMatching(
+  event: string,
+  params?: Record<string, unknown>,
+  eventID?: string,
+) {
+  await ensureMetaAdvancedMatching();
+  return fbqTrack(event, params, eventID);
 }

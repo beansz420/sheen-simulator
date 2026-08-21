@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -28,7 +28,7 @@ import { maskCPF, maskCEP, maskPhone, isValidCPF, lookupCepViaCep } from "@/lib/
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { createPixOrder } from "@/lib/checkout.functions";
 
-import { fbqTrack, getCheckoutEventId, getMetaBrowserIds, hasTrackedPurchase, markTrackedPurchase, purchaseEventId, setMetaAdvancedMatching } from "@/lib/meta-pixel";
+import { fbqTrack, getCheckoutEventId, newCheckoutEventId, getMetaBrowserIds, hasTrackedPurchase, markTrackedPurchase, purchaseEventId, setMetaAdvancedMatching } from "@/lib/meta-pixel";
 import { fetchOrderStatus } from "@/lib/order-status";
 import { getTracking } from "@/lib/tracking";
 
@@ -242,6 +242,36 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
   });
   const [cpfError, setCpfError] = useState<string | null>(null);
   const [cepStatus, setCepStatus] = useState<"idle" | "loading" | "ok" | "error">("idle");
+  const icFired = useRef(false);
+
+  // InitiateCheckout com dados do cliente já preenchidos: garante em/ph/fn/ln
+  // no evento (Meta: enviar o máximo de parâmetros de correspondência).
+  useEffect(() => {
+    if (icFired.current) return;
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(form.customer_email.trim());
+    const phoneOk = form.customer_phone.replace(/\D/g, "").length >= 10;
+    const nameOk = form.customer_name.trim().split(/\s+/).length >= 2;
+    if (!emailOk || !phoneOk || !nameOk) return;
+    icFired.current = true;
+    void (async () => {
+      await setMetaAdvancedMatching({ ...form });
+      fbqTrack(
+        "InitiateCheckout",
+        {
+          content_ids: [kit.id],
+          contents: [{ id: kit.id, quantity: kit.quantity, item_price: kit.price }],
+          content_name: kit.name,
+          content_type: "product",
+          content_category: "Clareador Dérmico",
+          currency: "BRL",
+          value: kit.price,
+          num_items: kit.quantity,
+        },
+        newCheckoutEventId(),
+      );
+    })();
+  }, [form, kit]);
+
 
   const set =
     (k: keyof typeof form) =>
@@ -311,7 +341,7 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
           tracking_parameters: tracking,
           fbp,
           fbc,
-          ic_event_id: getCheckoutEventId(),
+          ic_event_id: getCheckoutEventId() ?? newCheckoutEventId(),
         },
       });
 
