@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -28,7 +28,7 @@ import { maskCPF, maskCEP, maskPhone, isValidCPF, lookupCepViaCep } from "@/lib/
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { createPixOrder } from "@/lib/checkout.functions";
 
-import { fbqTrack, getCheckoutEventId, getMetaBrowserIds, hasTrackedPurchase, markTrackedPurchase, purchaseEventId, setMetaAdvancedMatching } from "@/lib/meta-pixel";
+import { fbqTrack, getCheckoutEventId, newCheckoutEventId, getMetaBrowserIds, hasTrackedPurchase, markTrackedPurchase, purchaseEventId, setMetaAdvancedMatching } from "@/lib/meta-pixel";
 import { fetchOrderStatus } from "@/lib/order-status";
 import { getTracking } from "@/lib/tracking";
 
