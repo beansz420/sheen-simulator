@@ -1,14 +1,16 @@
 import { useEffect } from "react";
 import { ShoppingCart, Truck, Users, ShieldCheck, Award } from "lucide-react";
-import { fbqTrack } from "@/lib/meta-pixel";
+import { trackWithMatching } from "@/lib/meta-pixel";
 
 export function ProductBuyBox() {
   // Meta Pixel: ViewContent ao visualizar a página do produto
   useEffect(() => {
-    fbqTrack("ViewContent", {
+    void trackWithMatching("ViewContent", {
       content_ids: ["clareador-dermico-cicatribem"],
+      contents: [{ id: "clareador-dermico-cicatribem", quantity: 1, item_price: 59.9 }],
       content_name: "Clareador Dérmico Cicatribem",
       content_type: "product",
+      content_category: "Clareador Dérmico",
       currency: "BRL",
       value: 59.9,
     });
