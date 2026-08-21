@@ -341,7 +341,7 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
           tracking_parameters: tracking,
           fbp,
           fbc,
-          ic_event_id: getCheckoutEventId(),
+          ic_event_id: getCheckoutEventId() ?? newCheckoutEventId(),
         },
       });
 
